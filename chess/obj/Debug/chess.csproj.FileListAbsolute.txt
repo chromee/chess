@@ -16,3 +16,12 @@ D:\Program Files\OneDrive\VisualProject\chess\chess\obj\Debug\chess.csprojResolv
 D:\Program Files\OneDrive\VisualProject\chess\chess\obj\Debug\chess.Form1.resources
 D:\Program Files\OneDrive\VisualProject\chess\chess\obj\Debug\chess.Properties.Resources.resources
 D:\Program Files\OneDrive\VisualProject\chess\chess\obj\Debug\chess.csproj.GenerateResource.Cache
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\bin\Debug\chess.exe.config
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.exe
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.pdb
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\bin\Debug\chess.exe
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\bin\Debug\chess.pdb
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.csprojResolveAssemblyReference.cache
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.Form1.resources
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.Properties.Resources.resources
+D:\Program Files\OneDrive\VisualProject\private\chess\chess\obj\Debug\chess.csproj.GenerateResource.Cache

@@ -16,12 +16,14 @@ namespace chess
         {
             InitializeComponent();
             Board board = new Board(this, textBox1);
-            Piece whitePiece = new Piece(playerColorType.white);
-            Piece blackPiece = new Piece(playerColorType.black);
+
 
             Panel boardPanel = new Panel();
             board.setBoardPanelSetting(boardPanel);
+            Piece blackPiece = new Piece(playerColorType.black, boardPanel, this);
             board.createBoard(boardPanel);
+            //Piece whitePiece = new Piece(playerColorType.white, boardPanel, this);
+
         }
     }
 }

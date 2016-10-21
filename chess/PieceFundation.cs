@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Drawing;
 
 namespace chess
 {
@@ -10,6 +12,21 @@ namespace chess
     {
         public playerColorType playerColor;
         public pieceType pieceType;
+        public int HorizontalPosition;
+        public int VerticalPosition;
+
+        public PictureBox Picture = new PictureBox();
+        public bool moveFlag;
+
+        public PieceFundation(pieceType pType, playerColorType pColor, int hor, int ver, PictureBox pic)
+        {
+            playerColor = pColor;
+            pieceType = pType;
+            HorizontalPosition = hor;
+            VerticalPosition = ver;
+            Picture = pic;
+            moveFlag = false;
+        }
 
         public class MovePattern
         {
@@ -18,12 +35,6 @@ namespace chess
         }
 
         public List<MovePattern> movePattern = new List<MovePattern>();
-
-        public PieceFundation(pieceType firstpieceType, playerColorType pColor)
-        {
-            playerColor = pColor;
-            pieceType = firstpieceType;
-        }
 
         public void setMovePattern(int horizontalMove, int verticalMove)
         {
