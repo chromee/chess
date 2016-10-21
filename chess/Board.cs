@@ -14,6 +14,7 @@ namespace chess
         TextBox debugText;
 
         private int squareButtonSize = 80;
+        
 
         public Board(Form form, TextBox textBox)
         {
@@ -53,12 +54,14 @@ namespace chess
         /// イベント関数
         /// </summary>
 
+        private int pieceMoveDist = 80;
+
         private void board_Click(object sender, EventArgs e)
         {
             if(Piece.king.moveFlag)
             {
-                Piece.king.Picture.Top += 100;
-                Piece.king.Picture.Left += 100;
+                Piece.king.Picture.Top += pieceMoveDist;
+                Piece.king.Picture.Left += pieceMoveDist;
                 Piece.king.moveFlag = false;
             }
         }
@@ -83,7 +86,11 @@ namespace chess
             btn.Click += new EventHandler(board_Click);
         }
 
-        class SquarePosition
+        /// <summary>
+        /// プライベートクラス
+        /// </summary>
+
+        private class SquarePosition
         {
             public int horizontal;
             public int vertical;
