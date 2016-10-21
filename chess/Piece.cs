@@ -6,72 +6,41 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 
-enum pieceType { king, queen, rook, bishop, knight, pawn }
-enum playerColorType { white, black }
-
 namespace chess
 {
     class Piece
     {
-        playerColorType playerColor;
-        Panel panel;
-        Form form;
+        public playerColorType playerColor { get; set; }
+        public pieceType pieceType { get; set; }
+        public int HorizontalPosition;      //配列で使う値
+        public int VerticalPosition;           //配列で使う値
+        public bool moveFlag;
+        public PictureBox Picture = new PictureBox();
 
-        private int pieceSize = 65;
-        private int piecePadding = 8;
-
-        public static PieceFundation king;
-        //PieceFundation queen;
-        //PieceFundation rook;
-        //PieceFundation bishop;
-        //PieceFundation knight;
-        //PieceFundation pawn;
-
-        public Piece(playerColorType playerCol, Panel boardPanel,Form f)
+        public Piece(pieceType pType, playerColorType pColor, int hor, int ver, PictureBox pic)
         {
-            playerColor = playerCol;
-            panel = boardPanel;
-            form = f;
-            setPiece();
+            playerColor = pColor;
+            pieceType = pType;
+            HorizontalPosition = hor;
+            VerticalPosition = ver;
+            Picture = pic;
+            moveFlag = false;
         }
 
-        private void setPiece()
+        public class MovePattern
         {
-            PictureBox kingPic = new PictureBox();
-            setPictureBoxSetting(kingPic);
-            king = new PieceFundation(pieceType.king, playerColor,0,0,kingPic);
-            king.setMovePattern(-1, 1);
-            king.setMovePattern(0, 1);
-            king.setMovePattern(1, 1);
-            king.setMovePattern(1, 0);
-            king.setMovePattern(-1, 0);
-            king.setMovePattern(-1, -1);
-            king.setMovePattern(0, -1);
-            king.setMovePattern(-1, 1);
-            
+            public int horizontal;
+            public int vertical;
         }
 
-        private void setPictureBoxSetting(PictureBox pic)
-        {
-            pic.Height = pieceSize;
-            pic.Width = pieceSize;
-            pic.Top = piecePadding;
-            pic.Left = piecePadding;
-            pic.Image = System.Drawing.Image.FromFile(@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\black_king.png");
-            pic.SizeMode = PictureBoxSizeMode.Zoom;
-            pic.BackColor = Color.Transparent;
-            pic.Click+= new EventHandler(piece_Click);
-            panel.Controls.Add(pic);
-            //form.Controls.Add(pic);
-        }
+        public List<MovePattern> movePattern = new List<MovePattern>();
 
-        /// <summary>
-        /// イベント関数
-        /// </summary>
-
-        private void piece_Click(object sender, EventArgs e)
+        public void setMovePattern(int horizontalMove, int verticalMove)
         {
-            king.moveFlag = true;
+            MovePattern mp = new MovePattern();
+            mp.horizontal = horizontalMove;
+            mp.vertical = verticalMove;
+            movePattern.Add(mp);
         }
     }
 }

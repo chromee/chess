@@ -15,13 +15,12 @@ namespace chess
         public Form1()
         {
             InitializeComponent();
-            Board board = new Board(this, textBox1);
 
-
-            Panel boardPanel = new Panel();
-            board.setBoardPanelSetting(boardPanel);
-            Piece blackPiece = new Piece(playerColorType.black, boardPanel, this);
-            board.createBoard(boardPanel);
+            Panel panel = new Panel();
+            Board board = new Board(panel, this, textBox1);
+            board.setBoardPanelSetting(panel);
+            PieceSet blackPiece = new PieceSet(playerColorType.black, panel, this);
+            board.createBoard();
             //Piece whitePiece = new Piece(playerColorType.white, boardPanel, this);
 
         }
