@@ -12,35 +12,38 @@ namespace chess
     {
         public playerColorType playerColor { get; set; }
         public pieceType pieceType { get; set; }
-        public int HorizontalPosition;      //配列で使う値
-        public int VerticalPosition;           //配列で使う値
+        public Cross position;
+        public Image image;
         public bool moveFlag;
-        public PictureBox Picture = new PictureBox();
 
-        public Piece(pieceType pType, playerColorType pColor, int hor, int ver, PictureBox pic)
+        private Board board;
+
+
+        public Piece(pieceType pType, playerColorType pColor, Cross c, Board b)
         {
             playerColor = pColor;
             pieceType = pType;
-            HorizontalPosition = hor;
-            VerticalPosition = ver;
-            Picture = pic;
+            position = c;
             moveFlag = false;
+           
+            board = b;
+            setPiecePos();
         }
 
-        public class MovePattern
+        private void setPiecePos()
         {
-            public int horizontal;
-            public int vertical;
+            var re = new System.Text.RegularExpressions.Regex(@"[^*a-z_]");
+            var pTypeStr = re.Replace(pieceType.ToString(), "");
+            //image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{pColor}_{pTypeStr}.png");
+            image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{pTypeStr}.png");
+            board.square[position.x, position.y].button.BackgroundImage = image;
         }
 
-        public List<MovePattern> movePattern = new List<MovePattern>();
-
-        public void setMovePattern(int horizontalMove, int verticalMove)
+        //移動パターン
+        public List<Cross> movePattern = new List<Cross>();
+        public void setMovePattern(int horMove, int verMove)
         {
-            MovePattern mp = new MovePattern();
-            mp.horizontal = horizontalMove;
-            mp.vertical = verticalMove;
-            movePattern.Add(mp);
+            movePattern.Add(new Cross(horMove, verMove));
         }
     }
 }
