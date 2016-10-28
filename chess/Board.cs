@@ -12,7 +12,8 @@ namespace chess
     {
         Form firstForm;
         Panel panel;
-        TextBox textBox;
+        TextBox textBox1;
+        TextBox textBox2;
 
         public PieceSet pieceSet;
 
@@ -20,13 +21,15 @@ namespace chess
         Label[] labelVertical;
         public Square[,] square;
 
-        public Board(Panel p, Form form, TextBox textBox)
+        public Board(Panel p, Form form, TextBox textBox1, TextBox tb2)
         {
             panel = p;
             firstForm = form;
-            this.textBox = textBox;
             setPanelSetting(panel);
             createBoard();
+
+            this.textBox1 = textBox1;
+            textBox2 = tb2;
         }
 
         public void setPieces(PieceSet p)
@@ -48,24 +51,29 @@ namespace chess
                     var selectedSquare = square[hor, ver];
                     if (sender.Equals(selectedSquare.button))
                     {
-                        int h = int.Parse(labelHorizontal[hor].Text);
-                        int v = int.Parse(labelVertical[ver].Text);
-                        textBox.Text = $"{h}, {v}";
-                        var piece = pieceSet.pieces.Where(p => p.position.x == hor && p.position.y == ver).FirstOrDefault();
+                        var piece = pieceSet.pieces.Find(p => p.position.x == hor && p.position.y == ver);
                         if (piece != null)
                         {
                             piece.moveFlag = true;
                             beforeSelectedPiece = piece;
                         }
-                        if (piece == null && beforeSelectedPiece != null)
+                        else if (piece == null && beforeSelectedPiece != null)
                         {
-                            beforeSelectedPiece.position = new Cross(h, v);
+                            beforeSelectedPiece.position = new Vector2(hor, ver);
+                            //pieceSet.pieces.Find(p => p ==beforeSelectedPiece).position = new Cross(hor, ver);
                             beforeSelectedSquare.button.BackgroundImage = null;
                             selectedSquare.button.BackgroundImage = beforeSelectedPiece.image;
                             selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
                             beforeSelectedPiece = null;
                         }
-                        beforeSelectedSquare = square[h, v];
+
+                        beforeSelectedSquare = square[hor, ver];
+                        textBox1.Text = $"{hor}, {ver}";
+                        if (piece != null)
+                        {
+                            var pInfo = $"{piece.position.x}, {piece.position.y}";
+                            textBox1.Text = $"{hor}, {ver}　piece:{pInfo}";
+                        }
                     }
                 }
             }

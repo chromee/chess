@@ -17,7 +17,7 @@ namespace chess
             InitializeComponent();
 
             Panel panel = new Panel();
-            Board board = new Board(panel, this, textBox1);
+            Board board = new Board(panel, this, textBox1, textBox2);
             PieceSet PieceSet = new PieceSet(this, board, textBox1);
             //PieceSet blackPiece = new PieceSet(playerColorType.black, this, board, textBox1);
             board.setPieces(PieceSet);

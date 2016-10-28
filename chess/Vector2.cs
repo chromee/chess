@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace chess
 {
-    class Cross
+    class Vector2
     {
         public int x;
         public int y;
-        public Cross(int hor,int ver)
+        public Vector2(int hor,int ver)
         {
             x = hor;
             y = ver;
