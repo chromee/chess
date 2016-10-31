@@ -42,6 +42,7 @@ namespace chess
         /// </summary>
         Piece beforeSelectedPiece = null;
         Square beforeSelectedSquare = null;
+        List<Square> canMoveSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
             for (int hor = 1; hor < 9; hor++)
@@ -52,28 +53,57 @@ namespace chess
                     if (sender.Equals(selectedSquare.button))
                     {
                         var piece = pieceSet.pieces.Find(p => p.position.x == hor && p.position.y == ver);
-                        if (piece != null)
+
+                        //pieace -> square
+                        if (piece != null && beforeSelectedPiece == null)
                         {
-                            piece.moveFlag = true;
                             beforeSelectedPiece = piece;
+                            foreach (var movePattern in piece.movePatterns)
+                            {
+                                if(square[movePattern.x,movePattern.y]!=null)
+                                {
+                                    canMoveSquares.Add(square[movePattern.x, movePattern.y]);
+                                    foreach (var canMoveSquare in canMoveSquares)
+                                    {
+                                        canMoveSquare.button.BackColor = Color.Red;
+                                    }
+                                }
+                            }
                         }
-                        else if (piece == null && beforeSelectedPiece != null)
+                        else if (beforeSelectedPiece != null && piece == null)
                         {
                             beforeSelectedPiece.position = new Vector2(hor, ver);
-                            //pieceSet.pieces.Find(p => p ==beforeSelectedPiece).position = new Cross(hor, ver);
                             beforeSelectedSquare.button.BackgroundImage = null;
+
                             selectedSquare.button.BackgroundImage = beforeSelectedPiece.image;
                             selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
                             beforeSelectedPiece = null;
                         }
 
-                        beforeSelectedSquare = square[hor, ver];
-                        textBox1.Text = $"{hor}, {ver}";
-                        if (piece != null)
+                        //pieace -> pieace
+                        if (beforeSelectedPiece != null && piece.pieceColor != beforeSelectedPiece.pieceColor)
                         {
-                            var pInfo = $"{piece.position.x}, {piece.position.y}";
-                            textBox1.Text = $"{hor}, {ver}　piece:{pInfo}";
+                            piece.position = new Vector2(0, 0);
+                            beforeSelectedPiece.position = new Vector2(hor, ver);
+                            beforeSelectedSquare.button.BackgroundImage = null;
+
+                            selectedSquare.button.BackgroundImage = beforeSelectedPiece.image;
+                            selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
+                            beforeSelectedPiece = null;
                         }
+                        else if (beforeSelectedPiece != null && piece.pieceColor == beforeSelectedPiece.pieceColor)
+                        {
+                            beforeSelectedPiece = piece;
+                        }
+
+
+                        textBox1.Text = $"{hor}, {ver}";
+                        if (piece != null && beforeSelectedPiece != null)
+                        {
+                            var pInfo = $"{piece.pieceColor}_{piece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
+                            textBox2.Text = $"{hor}, {ver}　pieceInfo : {pInfo}";
+                        }
+                        beforeSelectedSquare = square[hor, ver];
                     }
                 }
             }
