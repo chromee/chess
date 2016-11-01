@@ -10,7 +10,7 @@ namespace chess
 {
     class Piece
     {
-        public pieceColorType pieceColor { get; set; }
+        public pieceColor pieceColor { get; set; }
         public pieceType pieceType { get; set; }
         public Vector2 position;
         public Image image;
@@ -19,7 +19,7 @@ namespace chess
         private Board board;
 
 
-        public Piece(pieceType pType, pieceColorType pColor, Vector2 c, Board b)
+        public Piece(pieceType pType, pieceColor pColor, Vector2 c, Board b)
         {
             pieceColor = pColor;
             pieceType = pType;

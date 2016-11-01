@@ -102,7 +102,7 @@ namespace chess
                         }
                         textBox1.Text = $"{selectedSquare.position.x}, {selectedSquare.position.y}";
                         //textBox1.Text = $"{square.GetLength(0)}, {square.GetLength(1)}";
-                        textBox2.Text = $"pieceInfo : {pInfo}";
+
                     }
                 }
             }
@@ -221,13 +221,57 @@ namespace chess
                 int moveToPosX = x + movePattern.x;
                 int moveToPosY = y + movePattern.y;
                 bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
-                if (inBoard)
+                if (inBoard && selectedPiece.pieceType != pieceType.pawn)
                 {
                     canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
                     BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
+
+                //ポーンは斜め前の敵だけ倒せるやつ
+                if (selectedPiece.pieceType == pieceType.pawn)
+                {
+                    if (selectedPiece.pieceColor == pieceColor.white)
+                    {
+                        bool isPieceOnDiagonallyFront = pieceSet.pieces
+                            .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y + 1) ||
+                                              (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + 1));
+                        textBox2.Text = $"pieceInfo : {isPieceOnDiagonallyFront}";
+                        if (isPieceOnDiagonallyFront)
+                        {
+                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + 1]);
+                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + 1]);
+                            BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + 1].button.BackColor = Color.Salmon;
+                            BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + 1].button.BackColor = Color.Salmon;
+                        }
+                        else
+                        {
+                            canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
+                            BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                        }
+                    }
+                    else if (selectedPiece.pieceColor == pieceColor.black)
+                    {
+                        bool isPieceOnDiagonallyFront = pieceSet.pieces
+                            .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y - 1) ||
+                                              (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y - 1));
+                        textBox2.Text = $"pieceInfo : {isPieceOnDiagonallyFront}";
+                        if (isPieceOnDiagonallyFront)
+                        {
+                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y - 1]);
+                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y - 1]);
+                            BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y - 1].button.BackColor = Color.Salmon;
+                            BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y - 1].button.BackColor = Color.Salmon;
+                        }
+                        else
+                        {
+                            canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
+                            BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                        }
+                    }
+                }
             }
 
+            //クイーンとかの一気に移動できる駒が駒を飛び越えて移動できるのをなんとかする
             List<Square> removeSquares = new List<Square>();
             foreach (var square in canMoveSquares)
             {

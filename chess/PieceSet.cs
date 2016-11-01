@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 
 enum pieceType { king, queen, rook, bishop, knight, pawn }
-enum pieceColorType { white, black }
+enum pieceColor { white, black }
 
 namespace chess
 {
@@ -24,21 +24,21 @@ namespace chess
             form = f;
             board = b;
             textBox = t;
-            setPieces(pieceColorType.white);
-            setPieces(pieceColorType.black);
+            setPieces(pieceColor.white);
+            setPieces(pieceColor.black);
             setPiecesMovePattern();
         }
 
-        private void setPieces(pieceColorType pCol)
+        private void setPieces(pieceColor pCol)
         {
             int pawnLine = 0;
             int otherLine = 0;
-            if (pCol == pieceColorType.white)
+            if (pCol == pieceColor.white)
             {
                 pawnLine = 2;
                 otherLine = 1;
             }
-            else if (pCol == pieceColorType.black)
+            else if (pCol == pieceColor.black)
             {
                 pawnLine = 7;
                 otherLine = 8;
@@ -129,7 +129,7 @@ namespace chess
             var pawns = pieces.Where(p => p.pieceType == pieceType.pawn);
             foreach (var pawn in pawns)
             {
-                int direction = pawn.pieceColor == pieceColorType.white ? 1 : -1;
+                int direction = pawn.pieceColor == pieceColor.white ? 1 : -1;
                 pawn.setMovePattern(0, 1 * direction);
                 pawn.setMovePattern(0, 2 * direction);
             }
