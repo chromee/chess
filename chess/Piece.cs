@@ -32,8 +32,9 @@ namespace chess
         private void setPiecePos()
         {
             var re = new System.Text.RegularExpressions.Regex(@"[^*a-z_]");
-            image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{pieceColor}_{pieceType}.png");
-            //image = System.Drawing.Image.FromFile($@"C:\Users\odk\OneDrive\VisualProject\private\chess\chess\piece\{pieceColor}_{pieceType}.png");
+            var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            var imageDirectory = currentDirectory.Remove(currentDirectory.Length -10) + $@"\piece\{pieceColor}_{pieceType}.png";
+            image = System.Drawing.Image.FromFile(imageDirectory);
             if (board.square[position.x, position.y] != null)
             {
                 board.square[position.x, position.y].button.BackgroundImage = image;
@@ -42,7 +43,7 @@ namespace chess
         }
 
         //移動パターン
-        
+
         public void setMovePattern(int horMove, int verMove)
         {
             movePatterns.Add(new Vector2(horMove, verMove));
