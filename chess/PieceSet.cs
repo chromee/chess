@@ -129,8 +129,9 @@ namespace chess
             var pawns = pieces.Where(p => p.pieceType == pieceType.pawn);
             foreach (var pawn in pawns)
             {
-                pawn.setMovePattern(1, 0);
-                pawn.setMovePattern(2, 0);
+                int direction = pawn.pieceColor == pieceColorType.white ? 1 : -1;
+                pawn.setMovePattern(0, 1 * direction);
+                pawn.setMovePattern(0, 2 * direction);
             }
         }
 

@@ -21,14 +21,14 @@ namespace chess
         Label[] labelVertical;
         public Square[,] square;
 
-        public Board(Panel p, Form form, TextBox textBox1, TextBox tb2)
+        public Board(Panel p, Form form, TextBox tb1, TextBox tb2)
         {
             panel = p;
             firstForm = form;
             setPanelSetting(panel);
             createBoard();
 
-            this.textBox1 = textBox1;
+            textBox1 = tb1;
             textBox2 = tb2;
         }
 
@@ -41,69 +41,68 @@ namespace chess
         /// イベント関数
         /// </summary>
         Piece beforeSelectedPiece = null;
-        Square beforeSelectedSquare = null;
         List<Square> canMoveSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
-            for (int hor = 1; hor < 9; hor++)
+            for (int x = 1; x < 9; x++)
             {
-                for (int ver = 1; ver < 9; ver++)
+                for (int y = 1; y < 9; y++)
                 {
-                    var selectedSquare = square[hor, ver];
+                    var selectedSquare = square[x, y];
                     if (sender.Equals(selectedSquare.button))
                     {
-                        var piece = pieceSet.pieces.Find(p => p.position.x == hor && p.position.y == ver);
+                        var piece = pieceSet.pieces.Find(p => p.position.x == x && p.position.y == y);
 
-                        //pieace -> square
-                        if (piece != null && beforeSelectedPiece == null)
+                        bool isSelectPiece = piece != null;
+                        bool isSelectSquare = piece == null;
+                        bool isSelectedPiece = beforeSelectedPiece != null;
+
+                        //pieace選択
+                        if (isSelectPiece && !isSelectedPiece)
                         {
                             beforeSelectedPiece = piece;
-                            foreach (var movePattern in piece.movePatterns)
+                            setCanMoveSquares(piece, x, y);
+                        }
+                        //pieace選択 -> square選択
+                        else if (isSelectedPiece && isSelectSquare)
+                        {
+                            bool isSelectCanMoveSquare = canMoveSquares.Any(s => s.position == selectedSquare.position);
+                            if (isSelectCanMoveSquare)
                             {
-                                if(square[movePattern.x,movePattern.y]!=null)
-                                {
-                                    canMoveSquares.Add(square[movePattern.x, movePattern.y]);
-                                    foreach (var canMoveSquare in canMoveSquares)
-                                    {
-                                        canMoveSquare.button.BackColor = Color.Red;
-                                    }
-                                }
+                                movePiece(beforeSelectedPiece, selectedSquare);
+                                beforeSelectedPiece = null;
+                                resetCanMoveSquares(canMoveSquares);
                             }
                         }
-                        else if (beforeSelectedPiece != null && piece == null)
+                        //pieace選択 -> 敵pieace選択
+                        else if (isSelectedPiece && piece.pieceColor != beforeSelectedPiece.pieceColor)
                         {
-                            beforeSelectedPiece.position = new Vector2(hor, ver);
-                            beforeSelectedSquare.button.BackgroundImage = null;
-
-                            selectedSquare.button.BackgroundImage = beforeSelectedPiece.image;
-                            selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
-                            beforeSelectedPiece = null;
+                            bool isSelectCanMoveSquare = canMoveSquares.Any(s => s.position == selectedSquare.position);
+                            if (isSelectCanMoveSquare)
+                            {
+                                piece.position = new Vector2(0, 0);
+                                movePiece(beforeSelectedPiece, selectedSquare);
+                                resetCanMoveSquares(canMoveSquares);
+                                beforeSelectedPiece = null;
+                            }
                         }
-
-                        //pieace -> pieace
-                        if (beforeSelectedPiece != null && piece.pieceColor != beforeSelectedPiece.pieceColor)
+                        //pieace選択 -> 味方pieace選択
+                        else if (isSelectedPiece && piece.pieceColor == beforeSelectedPiece.pieceColor)
                         {
-                            piece.position = new Vector2(0, 0);
-                            beforeSelectedPiece.position = new Vector2(hor, ver);
-                            beforeSelectedSquare.button.BackgroundImage = null;
-
-                            selectedSquare.button.BackgroundImage = beforeSelectedPiece.image;
-                            selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
-                            beforeSelectedPiece = null;
-                        }
-                        else if (beforeSelectedPiece != null && piece.pieceColor == beforeSelectedPiece.pieceColor)
-                        {
+                            resetCanMoveSquares(canMoveSquares);
+                            setCanMoveSquares(piece, x, y);
                             beforeSelectedPiece = piece;
                         }
 
-
-                        textBox1.Text = $"{hor}, {ver}";
+                        //デバッグ関係
+                        string pInfo = $"pieceInfo : ";
                         if (piece != null && beforeSelectedPiece != null)
                         {
-                            var pInfo = $"{piece.pieceColor}_{piece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
-                            textBox2.Text = $"{hor}, {ver}　pieceInfo : {pInfo}";
+                            pInfo = $"{piece.pieceColor}_{piece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
                         }
-                        beforeSelectedSquare = square[hor, ver];
+                        textBox1.Text = $"{selectedSquare.position.x}, {selectedSquare.position.y}";
+                        //textBox1.Text = $"{square.GetLength(0)}, {square.GetLength(1)}";
+                        textBox2.Text = $"pieceInfo : {pInfo}";
                     }
                 }
             }
@@ -125,13 +124,13 @@ namespace chess
         private void createBoard()
         {
             square = new Square[9, 9];
-            for (int vertical = 1; vertical < 9; vertical++)
+            for (int x = 1; x < 9; x++)
             {
-                for (int horizontal = 1; horizontal < 9; horizontal++)
+                for (int y = 1; y < 9; y++)
                 {
                     var btn = new Button();
-                    square[horizontal, vertical] = new Square(horizontal, vertical, btn);
-                    setSquareButtonSetting(btn, horizontal, vertical);
+                    square[x, y] = new Square(new Vector2(x, y), btn);
+                    setSquareButtonSetting(btn, x, y);
                     setHorizontalLabel();
                     setVerticalLabel();
                     panel.Controls.Add(btn);
@@ -186,20 +185,69 @@ namespace chess
             }
         }
 
-        private void setSquareButtonSetting(Button btn, int horizontal, int vertical)
+        private void setSquareButtonSetting(Button btn, int x, int y)
         {
-            btn.Top = squareSize * 8 - squareSize * vertical;
-            btn.Left = squareSize * horizontal - squareSize + squarePadding;
+            btn.Top = squareSize * 8 - squareSize * y;
+            btn.Left = squareSize * x - squareSize + squarePadding;
             btn.Width = squareSize;
             btn.Height = squareSize;
-            if ((horizontal + vertical) % 2 == 0)
+            if ((x + y) % 2 == 0)
                 btn.BackColor = Color.LightYellow;
             else
                 btn.BackColor = Color.Tan;
             btn.BackgroundImageLayout = ImageLayout.Zoom;
             btn.TextAlign = ContentAlignment.MiddleCenter;
-            //btn.Text = $"{horizontal}, {vertical}";
             btn.Click += new EventHandler(board_Click);
+        }
+
+        private void movePiece(Piece movePiece, Square selectedSquare)
+        {
+            square[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
+            movePiece.position = new Vector2(selectedSquare.position.x, selectedSquare.position.y);
+            selectedSquare.button.BackgroundImage = movePiece.image;
+            selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
+        }
+
+        private void setCanMoveSquares(Piece selectedPiece, int x, int y)
+        {
+            foreach (var movePattern in selectedPiece.movePatterns)
+            {
+                int moveToPosX = x + movePattern.x;
+                int moveToPosY = y + movePattern.y;
+                bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
+                if (inBoard)
+                {
+                    canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                    square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                }
+            }
+
+            //foreach (var square in canMoveSquares)
+            //{
+            //    bool isPieceOnSquare = pieceSet.pieces.Find(p => p.position.x == square.position.x && p.position.y == square.position.y) != null;
+            //    if (isPieceOnSquare)
+            //    {
+            //        resetSquareColor(square);
+            //        canMoveSquares.Remove(square);
+            //    }
+            //}
+        }
+
+        private void resetCanMoveSquares(List<Square> resetSquares)
+        {
+            foreach (var square in resetSquares)
+            {
+                resetSquareColor(square);
+            }
+            resetSquares.Clear();
+        }
+
+        private void resetSquareColor(Square square)
+        {
+            if ((square.position.x + square.position.y) % 2 == 0)
+                square.button.BackColor = Color.LightYellow;
+            else
+                square.button.BackColor = Color.Tan;
         }
 
         /// <summary>
@@ -208,14 +256,12 @@ namespace chess
 
         public class Square
         {
-            public int horizontal;
-            public int vertical;
+            public Vector2 position;
             public Button button;
 
-            public Square(int hor, int ver, Button btn)
+            public Square(Vector2 pos, Button btn)
             {
-                horizontal = hor;
-                vertical = ver;
+                position = new Vector2(pos.x, pos.y);
                 button = btn;
             }
         }

@@ -32,10 +32,8 @@ namespace chess
         private void setPiecePos()
         {
             var re = new System.Text.RegularExpressions.Regex(@"[^*a-z_]");
-            //var pTypeStr = re.Replace(pieceType.ToString(), "");
-            //image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{playerColor}_{pieceType}.png");
-            //image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{pTypeStr}.png");
-            image = System.Drawing.Image.FromFile($@"C:\Users\odk\OneDrive\VisualProject\private\chess\chess\piece\{pieceColor}_{pieceType}.png");
+            image = System.Drawing.Image.FromFile($@"D:\Program Files\OneDrive\VisualProject\private\chess\chess\piece\{pieceColor}_{pieceType}.png");
+            //image = System.Drawing.Image.FromFile($@"C:\Users\odk\OneDrive\VisualProject\private\chess\chess\piece\{pieceColor}_{pieceType}.png");
             if (board.square[position.x, position.y] != null)
             {
                 board.square[position.x, position.y].button.BackgroundImage = image;
