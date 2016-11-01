@@ -19,7 +19,7 @@ namespace chess
 
         Label[] labelHorizontal;
         Label[] labelVertical;
-        public Square[,] square;
+        public Square[,] BoardSquare;
 
         public Board(Panel p, Form form, TextBox tb1, TextBox tb2)
         {
@@ -48,7 +48,7 @@ namespace chess
             {
                 for (int y = 1; y < 9; y++)
                 {
-                    var selectedSquare = square[x, y];
+                    var selectedSquare = BoardSquare[x, y];
                     if (sender.Equals(selectedSquare.button))
                     {
                         var piece = pieceSet.pieces.Find(p => p.position.x == x && p.position.y == y);
@@ -115,21 +115,21 @@ namespace chess
         private void setPanelSetting(Panel boardPanel)
         {
             boardPanel.Size = firstForm.Size;
-            boardPanel.Top = 50;
-            boardPanel.Left = 50;
+            boardPanel.Top = 80;
+            boardPanel.Left = 25;
             boardPanel.AutoScrollPosition = firstForm.AutoScrollPosition;
             firstForm.Controls.Add(boardPanel);
         }
 
         private void createBoard()
         {
-            square = new Square[9, 9];
+            BoardSquare = new Square[9, 9];
             for (int x = 1; x < 9; x++)
             {
                 for (int y = 1; y < 9; y++)
                 {
                     var btn = new Button();
-                    square[x, y] = new Square(new Vector2(x, y), btn);
+                    BoardSquare[x, y] = new Square(new Vector2(x, y), btn);
                     setSquareButtonSetting(btn, x, y);
                     setHorizontalLabel();
                     setVerticalLabel();
@@ -202,10 +202,16 @@ namespace chess
 
         private void movePiece(Piece movePiece, Square selectedSquare)
         {
-            square[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
+            BoardSquare[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
             movePiece.position = new Vector2(selectedSquare.position.x, selectedSquare.position.y);
             selectedSquare.button.BackgroundImage = movePiece.image;
             selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
+
+            //ポーンは最初だけ２マス進める(チェスの仕様)
+            if (movePiece.pieceType == pieceType.pawn && movePiece.movePatterns.Count == 2)
+            {
+                movePiece.movePatterns.RemoveAt(1);
+            }
         }
 
         private void setCanMoveSquares(Piece selectedPiece, int x, int y)
@@ -217,20 +223,29 @@ namespace chess
                 bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
                 if (inBoard)
                 {
-                    canMoveSquares.Add(square[moveToPosX, moveToPosY]);
-                    square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                    canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
+                    BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
             }
 
-            //foreach (var square in canMoveSquares)
-            //{
-            //    bool isPieceOnSquare = pieceSet.pieces.Find(p => p.position.x == square.position.x && p.position.y == square.position.y) != null;
-            //    if (isPieceOnSquare)
-            //    {
-            //        resetSquareColor(square);
-            //        canMoveSquares.Remove(square);
-            //    }
-            //}
+            List<Square> removeSquares = new List<Square>();
+            foreach (var square in canMoveSquares)
+            {
+                var PieceOnCanMoveSquare = pieceSet.pieces.Find(p => p.position.x == square.position.x && p.position.y == square.position.y);
+                if (PieceOnCanMoveSquare != null && PieceOnCanMoveSquare.pieceColor == selectedPiece.pieceColor)
+                {
+                    Vector2 relativePos = new Vector2(PieceOnCanMoveSquare.position.x - selectedPiece.position.x, PieceOnCanMoveSquare.position.y - selectedPiece.position.y);
+                }
+                else if (PieceOnCanMoveSquare != null && PieceOnCanMoveSquare.pieceColor != selectedPiece.pieceColor)
+                {
+
+                }
+            }
+            foreach (var square in removeSquares)
+            {
+                resetSquareColor(square);
+                canMoveSquares.Remove(square);
+            }
         }
 
         private void resetCanMoveSquares(List<Square> resetSquares)

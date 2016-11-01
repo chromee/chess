@@ -31,13 +31,12 @@ namespace chess
 
         private void setPiecePos()
         {
-            var re = new System.Text.RegularExpressions.Regex(@"[^*a-z_]");
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             var imageDirectory = currentDirectory.Remove(currentDirectory.Length -10) + $@"\piece\{pieceColor}_{pieceType}.png";
             image = System.Drawing.Image.FromFile(imageDirectory);
-            if (board.square[position.x, position.y] != null)
+            if (board.BoardSquare[position.x, position.y] != null)
             {
-                board.square[position.x, position.y].button.BackgroundImage = image;
+                board.BoardSquare[position.x, position.y].button.BackgroundImage = image;
             }
 
         }

@@ -19,10 +19,7 @@ namespace chess
             Panel panel = new Panel();
             Board board = new Board(panel, this, textBox1, textBox2);
             PieceSet PieceSet = new PieceSet(this, board, textBox1);
-            //PieceSet blackPiece = new PieceSet(playerColorType.black, this, board, textBox1);
             board.setPieces(PieceSet);
-            //board.setPieces(playerColorType.black, blackPiece);
-            //textBox1.Text = $"{PieceSet.pieces.First().position == new Cross(4, 1)}";
         }
     }
 }
