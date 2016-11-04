@@ -31,14 +31,19 @@ namespace chess
 
         private void setPiecePos()
         {
-            var currentDirectory = System.IO.Directory.GetCurrentDirectory();
-            var imageDirectory = currentDirectory.Remove(currentDirectory.Length -10) + $@"\piece\{pieceColor}_{pieceType}.png";
-            image = System.Drawing.Image.FromFile(imageDirectory);
+            setPieceImage();
             if (board.BoardSquare[position.x, position.y] != null)
             {
                 board.BoardSquare[position.x, position.y].button.BackgroundImage = image;
             }
 
+        }
+
+        public void setPieceImage()
+        {
+            var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            var imageDirectory = currentDirectory.Remove(currentDirectory.Length - 10) + $@"\piece\{pieceColor}_{pieceType}.png";
+            image = System.Drawing.Image.FromFile(imageDirectory);
         }
 
         //移動パターン

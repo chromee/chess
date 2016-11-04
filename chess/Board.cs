@@ -100,7 +100,7 @@ namespace chess
                         {
                             pInfo = $"{piece.pieceColor}_{piece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
                         }
-                        textBox1.Text = $"{selectedSquare.position.x}, {selectedSquare.position.y}";
+                        //textBox1.Text = $"{selectedSquare.position.x}, {selectedSquare.position.y}";
                         //textBox1.Text = $"{square.GetLength(0)}, {square.GetLength(1)}";
 
                     }
@@ -212,6 +212,34 @@ namespace chess
             {
                 movePiece.movePatterns.RemoveAt(1);
             }
+
+            //ポーンが一番奥まできたらクイーンになるやつ
+            if (movePiece.pieceType == pieceType.pawn && movePiece.pieceColor == pieceColor.white && movePiece.position.y == 8)
+            {
+                pawnChangeToQueen(movePiece);
+            }
+            if (movePiece.pieceType == pieceType.pawn && movePiece.pieceColor == pieceColor.black && movePiece.position.y == 0)
+            {
+                pawnChangeToQueen(movePiece);
+            }
+        }
+
+        private void pawnChangeToQueen(Piece pawn)
+        {
+            pawn.pieceType = pieceType.queen;
+            pawn.setPieceImage();
+            BoardSquare[pawn.position.x, pawn.position.y].button.BackgroundImage = pawn.image;
+            for (int i = 1; i < 9; i++)
+            {
+                pawn.setMovePattern(-1 * i, 0 * i);
+                pawn.setMovePattern(-1 * i, 1 * i);
+                pawn.setMovePattern(0 * i, 1 * i);
+                pawn.setMovePattern(1 * i, 1 * i);
+                pawn.setMovePattern(1 * i, 0 * i);
+                pawn.setMovePattern(1 * i, -1 * i);
+                pawn.setMovePattern(0 * i, -1 * i);
+                pawn.setMovePattern(-1 * i, -1 * i);
+            }
         }
 
         private void setCanMoveSquares(Piece selectedPiece, int x, int y)
@@ -226,69 +254,168 @@ namespace chess
                     canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
                     BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
-
-                //ポーンは斜め前の敵だけ倒せるやつ
-                if (selectedPiece.pieceType == pieceType.pawn)
-                {
-                    if (selectedPiece.pieceColor == pieceColor.white)
-                    {
-                        bool isPieceOnDiagonallyFront = pieceSet.pieces
-                            .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y + 1) ||
-                                              (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + 1));
-                        textBox2.Text = $"pieceInfo : {isPieceOnDiagonallyFront}";
-                        if (isPieceOnDiagonallyFront)
-                        {
-                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + 1]);
-                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + 1]);
-                            BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + 1].button.BackColor = Color.Salmon;
-                            BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + 1].button.BackColor = Color.Salmon;
-                        }
-                        else
-                        {
-                            canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
-                            BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
-                        }
-                    }
-                    else if (selectedPiece.pieceColor == pieceColor.black)
-                    {
-                        bool isPieceOnDiagonallyFront = pieceSet.pieces
-                            .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y - 1) ||
-                                              (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y - 1));
-                        textBox2.Text = $"pieceInfo : {isPieceOnDiagonallyFront}";
-                        if (isPieceOnDiagonallyFront)
-                        {
-                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y - 1]);
-                            canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y - 1]);
-                            BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y - 1].button.BackColor = Color.Salmon;
-                            BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y - 1].button.BackColor = Color.Salmon;
-                        }
-                        else
-                        {
-                            canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
-                            BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
-                        }
-                    }
-                }
+                pawnMoveSquares(selectedPiece, moveToPosX, moveToPosY);               
+                removeCannotMovesquares(selectedPiece, x, y);
             }
 
+        }
+
+        private void pawnMoveSquares(Piece selectedPiece, int moveToPosX, int moveToPosY)
+        {
+            //ポーンは斜め前の敵だけ倒せるやつ
+            if (selectedPiece.pieceType == pieceType.pawn)
+            {
+                int moveDirection = 0;
+                if (selectedPiece.pieceColor == pieceColor.white)
+                    moveDirection = 1;
+                else if (selectedPiece.pieceColor == pieceColor.black)
+                    moveDirection = -1;
+
+                bool isPieceOnRightFront = pieceSet.pieces
+                        .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceType == selectedPiece.pieceType));
+                bool isPieceOnLeftFront = pieceSet.pieces
+                        .Any(p => (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceType == selectedPiece.pieceType));
+                bool isPieceOnFront = pieceSet.pieces
+                        .Any(p => (p.position.x == selectedPiece.position.x && p.position.y == selectedPiece.position.y + moveDirection));
+
+                if (isPieceOnRightFront)
+                {
+                    canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection]);
+                    BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
+                }
+                if (isPieceOnLeftFront)
+                {
+                    canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection]);
+                    BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
+                }
+                if (!isPieceOnFront)
+                {
+                    canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
+                    BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                }
+            }
+        }
+
+        private void removeCannotMovesquares(Piece selectedPiece, int x, int y)
+        {
             //クイーンとかの一気に移動できる駒が駒を飛び越えて移動できるのをなんとかする
             List<Square> removeSquares = new List<Square>();
-            foreach (var square in canMoveSquares)
+            if (selectedPiece.pieceType == pieceType.bishop || selectedPiece.pieceType == pieceType.queen || selectedPiece.pieceType == pieceType.rook)
             {
-                var PieceOnCanMoveSquare = pieceSet.pieces.Find(p => p.position.x == square.position.x && p.position.y == square.position.y);
-                if (PieceOnCanMoveSquare != null && PieceOnCanMoveSquare.pieceColor == selectedPiece.pieceColor)
+                foreach (var canMoveSquare in canMoveSquares)
                 {
-                    Vector2 relativePos = new Vector2(PieceOnCanMoveSquare.position.x - selectedPiece.position.x, PieceOnCanMoveSquare.position.y - selectedPiece.position.y);
-                }
-                else if (PieceOnCanMoveSquare != null && PieceOnCanMoveSquare.pieceColor != selectedPiece.pieceColor)
-                {
+                    var PieceOnMoveSquare = pieceSet.pieces.Find(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y);
 
+                    if (PieceOnMoveSquare != null)
+                    {
+                        Vector2 relativePos = new Vector2(PieceOnMoveSquare.position.x - selectedPiece.position.x, PieceOnMoveSquare.position.y - selectedPiece.position.y);
+
+                        //縦方向
+                        if (relativePos.x == 0)
+                        {
+                            if (relativePos.y > 0)
+                            {
+                                for (int i = PieceOnMoveSquare.position.y; i < 9; i++)
+                                {
+                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
+                                }
+                            }
+                            else if (relativePos.y < 0)
+                            {
+                                for (int i = PieceOnMoveSquare.position.y; i > 0; i--)
+                                {
+                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
+                                }
+                            }
+                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
+                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
+                        }
+                        //横方向
+                        else if (relativePos.y == 0)
+                        {
+                            if (relativePos.x > 0)
+                            {
+                                for (int i = PieceOnMoveSquare.position.x; i < 9; i++)
+                                {
+                                    removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
+                                }
+                            }
+                            else if (relativePos.x < 0)
+                            {
+                                for (int i = PieceOnMoveSquare.position.x; i > 0; i--)
+                                {
+                                    removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
+                                }
+                            }
+                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
+                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
+                        }
+                        //右斜め上方向
+                        else if ((relativePos.x > 0 && relativePos.y > 0) || (relativePos.x < 0 && relativePos.y < 0))
+                        {
+                            if (relativePos.x > 0 && relativePos.y > 0)
+                            {
+                                var lowerPos = PieceOnMoveSquare.position.x > PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
+                                for (int i = lowerPos; i < 9; i++)
+                                {
+                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i - lowerPos, PieceOnMoveSquare.position.y + i - lowerPos]);
+                                }
+                            }
+                            else if (relativePos.x < 0 && relativePos.y < 0)
+                            {
+                                var lowerPos = PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
+                                for (int i = lowerPos; i > 0; i--)
+                                {
+                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i + lowerPos, PieceOnMoveSquare.position.y - i + lowerPos]);
+                                }
+                            }
+                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
+                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
+                        }
+                        //左斜め上方向
+                        else if ((relativePos.x < 0 && relativePos.y > 0) || (relativePos.x > 0 && relativePos.y < 0))
+                        {
+                            //左斜め上からのboardの中線(1,8) => (8,1)のラインが判定の分かれ目
+                            //左上に上る場合，中線より左側はx=0がy=9より先にくる，中線より右側はy=9がx=0より先に来る。
+                            if (relativePos.x < 0 && relativePos.y > 0)
+                            {
+                                //中線の左側が x + y < 9
+                                if (PieceOnMoveSquare.position.x + PieceOnMoveSquare.position.y < 9)
+                                {
+                                    var j = 0;
+                                    for (int i = PieceOnMoveSquare.position.x; i > 0; i--)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - j, PieceOnMoveSquare.position.y + j]);
+                                    }
+                                }
+                                else
+                                {
+                                    var j = 0;
+                                    for (int i = PieceOnMoveSquare.position.y; i > 0; i--)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + j, PieceOnMoveSquare.position.y - j]);
+                                    }
+                                }
+                            }
+                            else if (relativePos.x > 0 && relativePos.y < 0)
+                            {
+                                var lowerPos = PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
+                                for (int i = lowerPos; i > 0; i--)
+                                {
+                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i + lowerPos, PieceOnMoveSquare.position.y - i + lowerPos]);
+                                }
+                            }
+                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
+                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
+                        }
+                    }
                 }
             }
-            foreach (var square in removeSquares)
+
+            foreach (var removeSquare in removeSquares)
             {
-                resetSquareColor(square);
-                canMoveSquares.Remove(square);
+                removeSquare.resetColor();
+                canMoveSquares.Remove(removeSquare);
             }
         }
 
@@ -296,33 +423,9 @@ namespace chess
         {
             foreach (var square in resetSquares)
             {
-                resetSquareColor(square);
+                square.resetColor();
             }
             resetSquares.Clear();
-        }
-
-        private void resetSquareColor(Square square)
-        {
-            if ((square.position.x + square.position.y) % 2 == 0)
-                square.button.BackColor = Color.LightYellow;
-            else
-                square.button.BackColor = Color.Tan;
-        }
-
-        /// <summary>
-        /// プライベートクラス
-        /// </summary>
-
-        public class Square
-        {
-            public Vector2 position;
-            public Button button;
-
-            public Square(Vector2 pos, Button btn)
-            {
-                position = new Vector2(pos.x, pos.y);
-                button = btn;
-            }
         }
 
     }
