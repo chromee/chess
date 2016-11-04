@@ -44,24 +44,24 @@ namespace chess
         List<Square> canMoveSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
-            for (int x = 1; x < 9; x++)
+            for (int selectedX = 1; selectedX < 9; selectedX++)
             {
-                for (int y = 1; y < 9; y++)
+                for (int selectedY = 1; selectedY < 9; selectedY++)
                 {
-                    var selectedSquare = BoardSquare[x, y];
+                    var selectedSquare = BoardSquare[selectedX, selectedY];
                     if (sender.Equals(selectedSquare.button))
                     {
-                        var piece = pieceSet.pieces.Find(p => p.position.x == x && p.position.y == y);
+                        var selectedPiece = pieceSet.pieces.Find(p => p.position.x == selectedX && p.position.y == selectedY);
 
-                        bool isSelectPiece = piece != null;
-                        bool isSelectSquare = piece == null;
+                        bool isSelectPiece = selectedPiece != null;
+                        bool isSelectSquare = selectedPiece == null;
                         bool isSelectedPiece = beforeSelectedPiece != null;
 
                         //pieace選択
                         if (isSelectPiece && !isSelectedPiece)
                         {
-                            beforeSelectedPiece = piece;
-                            setCanMoveSquares(piece, x, y);
+                            beforeSelectedPiece = selectedPiece;
+                            setCanMoveSquares(selectedPiece);
                         }
                         //pieace選択 -> square選択
                         else if (isSelectedPiece && isSelectSquare)
@@ -75,30 +75,30 @@ namespace chess
                             }
                         }
                         //pieace選択 -> 敵pieace選択
-                        else if (isSelectedPiece && piece.pieceColor != beforeSelectedPiece.pieceColor)
+                        else if (isSelectedPiece && selectedPiece.pieceColor != beforeSelectedPiece.pieceColor)
                         {
                             bool isSelectCanMoveSquare = canMoveSquares.Any(s => s.position == selectedSquare.position);
                             if (isSelectCanMoveSquare)
                             {
-                                piece.position = new Vector2(0, 0);
+                                selectedPiece.position = new Vector2(0, 0);
                                 movePiece(beforeSelectedPiece, selectedSquare);
                                 resetCanMoveSquares(canMoveSquares);
                                 beforeSelectedPiece = null;
                             }
                         }
                         //pieace選択 -> 味方pieace選択
-                        else if (isSelectedPiece && piece.pieceColor == beforeSelectedPiece.pieceColor)
+                        else if (isSelectedPiece && selectedPiece.pieceColor == beforeSelectedPiece.pieceColor)
                         {
                             resetCanMoveSquares(canMoveSquares);
-                            setCanMoveSquares(piece, x, y);
-                            beforeSelectedPiece = piece;
+                            setCanMoveSquares(selectedPiece);
+                            beforeSelectedPiece = selectedPiece;
                         }
 
                         //デバッグ関係
                         string pInfo = $"pieceInfo : ";
-                        if (piece != null && beforeSelectedPiece != null)
+                        if (selectedPiece != null && beforeSelectedPiece != null)
                         {
-                            pInfo = $"{piece.pieceColor}_{piece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
+                            pInfo = $"{selectedPiece.pieceColor}_{selectedPiece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
                         }
                         //textBox1.Text = $"{selectedSquare.position.x}, {selectedSquare.position.y}";
                         //textBox1.Text = $"{square.GetLength(0)}, {square.GetLength(1)}";
@@ -242,22 +242,21 @@ namespace chess
             }
         }
 
-        private void setCanMoveSquares(Piece selectedPiece, int x, int y)
+        private void setCanMoveSquares(Piece selectedPiece)
         {
             foreach (var movePattern in selectedPiece.movePatterns)
             {
-                int moveToPosX = x + movePattern.x;
-                int moveToPosY = y + movePattern.y;
+                int moveToPosX = selectedPiece.position.x + movePattern.x;
+                int moveToPosY = selectedPiece.position.y + movePattern.y;
                 bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
                 if (inBoard && selectedPiece.pieceType != pieceType.pawn)
                 {
                     canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
                     BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
-                pawnMoveSquares(selectedPiece, moveToPosX, moveToPosY);               
-                removeCannotMovesquares(selectedPiece, x, y);
+                pawnMoveSquares(selectedPiece, moveToPosX, moveToPosY);
             }
-
+            removeCannotMovesquares(selectedPiece);
         }
 
         private void pawnMoveSquares(Piece selectedPiece, int moveToPosX, int moveToPosY)
@@ -272,9 +271,9 @@ namespace chess
                     moveDirection = -1;
 
                 bool isPieceOnRightFront = pieceSet.pieces
-                        .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceType == selectedPiece.pieceType));
+                        .Any(p => (p.position.x == selectedPiece.position.x + 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceColor != selectedPiece.pieceColor));
                 bool isPieceOnLeftFront = pieceSet.pieces
-                        .Any(p => (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceType == selectedPiece.pieceType));
+                        .Any(p => (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceColor != selectedPiece.pieceColor));
                 bool isPieceOnFront = pieceSet.pieces
                         .Any(p => (p.position.x == selectedPiece.position.x && p.position.y == selectedPiece.position.y + moveDirection));
 
@@ -296,7 +295,7 @@ namespace chess
             }
         }
 
-        private void removeCannotMovesquares(Piece selectedPiece, int x, int y)
+        private void removeCannotMovesquares(Piece selectedPiece)
         {
             //クイーンとかの一気に移動できる駒が駒を飛び越えて移動できるのをなんとかする
             List<Square> removeSquares = new List<Square>();
@@ -304,7 +303,7 @@ namespace chess
             {
                 foreach (var canMoveSquare in canMoveSquares)
                 {
-                    var PieceOnMoveSquare = pieceSet.pieces.Find(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y);
+                    Piece PieceOnMoveSquare = pieceSet.pieces.Find(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y);
 
                     if (PieceOnMoveSquare != null)
                     {
@@ -314,63 +313,57 @@ namespace chess
                         if (relativePos.x == 0)
                         {
                             if (relativePos.y > 0)
-                            {
                                 for (int i = PieceOnMoveSquare.position.y; i < 9; i++)
-                                {
                                     removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
-                                }
-                            }
                             else if (relativePos.y < 0)
-                            {
                                 for (int i = PieceOnMoveSquare.position.y; i > 0; i--)
-                                {
                                     removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
-                                }
-                            }
-                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
-                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                         }
                         //横方向
                         else if (relativePos.y == 0)
                         {
                             if (relativePos.x > 0)
-                            {
                                 for (int i = PieceOnMoveSquare.position.x; i < 9; i++)
-                                {
                                     removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
-                                }
-                            }
                             else if (relativePos.x < 0)
-                            {
                                 for (int i = PieceOnMoveSquare.position.x; i > 0; i--)
-                                {
                                     removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
-                                }
-                            }
-                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
-                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                         }
                         //右斜め上方向
                         else if ((relativePos.x > 0 && relativePos.y > 0) || (relativePos.x < 0 && relativePos.y < 0))
                         {
                             if (relativePos.x > 0 && relativePos.y > 0)
                             {
-                                var lowerPos = PieceOnMoveSquare.position.x > PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
-                                for (int i = lowerPos; i < 9; i++)
-                                {
-                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i - lowerPos, PieceOnMoveSquare.position.y + i - lowerPos]);
-                                }
+                                var i = 0;
+                                if (PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y)
+                                    for (int y = PieceOnMoveSquare.position.y; y < 9; y++)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
+                                        i++;
+                                    }
+                                else
+                                    for (int x = PieceOnMoveSquare.position.x; x < 9; x++)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
+                                        i++;
+                                    }
                             }
                             else if (relativePos.x < 0 && relativePos.y < 0)
                             {
-                                var lowerPos = PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
-                                for (int i = lowerPos; i > 0; i--)
-                                {
-                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i + lowerPos, PieceOnMoveSquare.position.y - i + lowerPos]);
-                                }
+                                var i = 0;
+                                if (PieceOnMoveSquare.position.x > PieceOnMoveSquare.position.y)
+                                    for (int y = PieceOnMoveSquare.position.y; y > 0; y--)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
+                                        i++;
+                                    }
+                                else
+                                    for (int x = PieceOnMoveSquare.position.x; x > 0; x--)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
+                                        i++;
+                                    }
                             }
-                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
-                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                         }
                         //左斜め上方向
                         else if ((relativePos.x < 0 && relativePos.y > 0) || (relativePos.x > 0 && relativePos.y < 0))
@@ -379,44 +372,59 @@ namespace chess
                             //左上に上る場合，中線より左側はx=0がy=9より先にくる，中線より右側はy=9がx=0より先に来る。
                             if (relativePos.x < 0 && relativePos.y > 0)
                             {
-                                //中線の左側が x + y < 9
+                                var i = 0;
                                 if (PieceOnMoveSquare.position.x + PieceOnMoveSquare.position.y < 9)
-                                {
-                                    var j = 0;
-                                    for (int i = PieceOnMoveSquare.position.x; i > 0; i--)
+                                    for (int x = PieceOnMoveSquare.position.x; x > 0; x--)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - j, PieceOnMoveSquare.position.y + j]);
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
+                                        i++;
                                     }
-                                }
                                 else
-                                {
-                                    var j = 0;
-                                    for (int i = PieceOnMoveSquare.position.y; i > 0; i--)
+                                    for (int y = PieceOnMoveSquare.position.y; y < 9; y++)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + j, PieceOnMoveSquare.position.y - j]);
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
+                                        i++;
                                     }
-                                }
                             }
                             else if (relativePos.x > 0 && relativePos.y < 0)
                             {
-                                var lowerPos = PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y ? PieceOnMoveSquare.position.x : PieceOnMoveSquare.position.y;
-                                for (int i = lowerPos; i > 0; i--)
-                                {
-                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i + lowerPos, PieceOnMoveSquare.position.y - i + lowerPos]);
-                                }
+                                var i = 0;
+                                if (PieceOnMoveSquare.position.x + PieceOnMoveSquare.position.y < 9)
+                                    for (int y = PieceOnMoveSquare.position.y; y > 0; y--)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
+                                        i++;
+                                    }
+                                else
+                                    for (int x = PieceOnMoveSquare.position.x; x < 9; x++)
+                                    {
+                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
+                                        i++;
+                                    }
                             }
-                            if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
-                                removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                         }
+                        if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
+                            removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                     }
                 }
             }
+            else
+            {
+                foreach (var canMoveSquare in canMoveSquares)
+                {
+                    if (pieceSet.pieces.Any(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y && p.pieceColor == selectedPiece.pieceColor))
+                        removeSquares.Add(canMoveSquare);
+                }
+            }
 
+            //MessageBox.Show($"{}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             foreach (var removeSquare in removeSquares)
             {
+                //MessageBox.Show($"{removeSquare.position.x}, {removeSquare.position.y}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 removeSquare.resetColor();
                 canMoveSquares.Remove(removeSquare);
             }
+            removeSquares.Clear();
         }
 
         private void resetCanMoveSquares(List<Square> resetSquares)
