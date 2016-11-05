@@ -29,7 +29,7 @@ namespace chess
             setPiecesMovePattern();
         }
 
-        private void setPieces(pieceColor pCol)
+        public void setPieces(pieceColor pCol)
         {
             int pawnLine = 0;
             int otherLine = 0;
@@ -58,7 +58,7 @@ namespace chess
             pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(8, otherLine), board));
         }
 
-        private void setPiecesMovePattern()
+        public void setPiecesMovePattern()
         {
             var kings = pieces.Where(p => p.pieceType == pieceType.king);
             foreach (var king in kings)
