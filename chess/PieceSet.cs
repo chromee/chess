@@ -15,15 +15,13 @@ namespace chess
     {
         Form form;
         Board board;
-        TextBox textBox;
 
         public List<Piece> pieces = new List<Piece>(); //左のポーン→右のルーク
 
-        public PieceSet(Form f, Board b, TextBox t)
+        public PieceSet(Form f, Board b)
         {
             form = f;
             board = b;
-            textBox = t;
             setPieces(pieceColor.white);
             setPieces(pieceColor.black);
             setPiecesMovePattern();

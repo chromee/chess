@@ -12,8 +12,6 @@ namespace chess
     {
         Form firstForm;
         Panel panel;
-        TextBox textBox1;
-        TextBox textBox2;
 
         public PieceSet pieceSet;
 
@@ -22,17 +20,16 @@ namespace chess
         public Square[,] BoardSquare;
 
         private pieceColor turnPlayerColor;
+        private Label turnLabel;
 
-        public Board(Panel p, Form form, TextBox tb1, TextBox tb2)
+        public Board(Panel p, Form form, Label L)
         {
             panel = p;
             firstForm = form;
+            turnLabel = L;
             setPanelSetting(panel);
             createBoard();
             turnPlayerColor = pieceColor.white;
-
-            textBox1 = tb1;
-            textBox2 = tb2;
         }
 
         public void setPieces(PieceSet p)
@@ -106,13 +103,6 @@ namespace chess
                             resetCanMoveSquares(canMoveSquares);
                             setCanMoveSquares(selectedPiece);
                             beforeSelectedPiece = selectedPiece;
-                        }
-
-                        //デバッグ関係
-                        string pInfo = $"pieceInfo : ";
-                        if (selectedPiece != null && beforeSelectedPiece != null)
-                        {
-                            pInfo = $"{selectedPiece.pieceColor}_{selectedPiece.pieceType}, before : {beforeSelectedPiece.pieceColor}_{beforeSelectedPiece.pieceType}";
                         }
                     }
                 }
@@ -268,7 +258,7 @@ namespace chess
                 canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
                 BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
             }
-            if (!isPieceOnTwoFront && (movePatternY == 2 || movePatternY == -2))
+            if (!isPieceOnFront && !isPieceOnTwoFront && (movePatternY == 2 || movePatternY == -2))
             {
                 canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
                 BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
@@ -443,6 +433,7 @@ namespace chess
         private void changeTurn(Piece beforeSelectedPiece)
         {
             turnPlayerColor = beforeSelectedPiece.pieceColor == pieceColor.white ? pieceColor.black : pieceColor.white;
+            turnLabel.Text = $"{turnPlayerColor} turn";
         }
 
         private void pawnChangeToQueen(Piece pawn)
