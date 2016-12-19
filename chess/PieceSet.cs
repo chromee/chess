@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-enum pieceType { king, queen, rook, bishop, knight, pawn }
-enum pieceColor { white, black }
+public enum PieceType { king, queen, rook, bishop, knight, pawn }
+public enum PieceColor { white, black }
 
 namespace chess
 {
@@ -12,21 +12,21 @@ namespace chess
 
         public PieceSet()
         {
-            setPieces(pieceColor.white);
-            setPieces(pieceColor.black);
+            setPieces(PieceColor.white);
+            setPieces(PieceColor.black);
             setPiecesMovePattern();
         }
 
-        public void setPieces(pieceColor pCol)
+        public void setPieces(PieceColor pCol)
         {
             int pawnLine = 0;
             int otherLine = 0;
-            if (pCol == pieceColor.white)
+            if (pCol == PieceColor.white)
             {
                 pawnLine = 2;
                 otherLine = 1;
             }
-            else if (pCol == pieceColor.black)
+            else if (pCol == PieceColor.black)
             {
                 pawnLine = 7;
                 otherLine = 8;
@@ -34,21 +34,21 @@ namespace chess
 
             for (int i = 1; i < 9; i++)
             {
-                pieces.Add(new Piece(pieceType.pawn, pCol, new Vector2(i, pawnLine)));
+                pieces.Add(new Piece(PieceType.pawn, pCol, new Vector2(i, pawnLine)));
             }
-            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(1, otherLine)));
-            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(2, otherLine)));
-            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(3, otherLine)));
-            pieces.Add(new Piece(pieceType.queen, pCol, new Vector2(4, otherLine)));
-            pieces.Add(new Piece(pieceType.king, pCol, new Vector2(5, otherLine)));
-            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(6, otherLine)));
-            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(7, otherLine)));
-            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(8, otherLine)));
+            pieces.Add(new Piece(PieceType.rook, pCol, new Vector2(1, otherLine)));
+            pieces.Add(new Piece(PieceType.knight, pCol, new Vector2(2, otherLine)));
+            pieces.Add(new Piece(PieceType.bishop, pCol, new Vector2(3, otherLine)));
+            pieces.Add(new Piece(PieceType.queen, pCol, new Vector2(4, otherLine)));
+            pieces.Add(new Piece(PieceType.king, pCol, new Vector2(5, otherLine)));
+            pieces.Add(new Piece(PieceType.bishop, pCol, new Vector2(6, otherLine)));
+            pieces.Add(new Piece(PieceType.knight, pCol, new Vector2(7, otherLine)));
+            pieces.Add(new Piece(PieceType.rook, pCol, new Vector2(8, otherLine)));
         }
 
         public void setPiecesMovePattern()
         {
-            var kings = pieces.Where(p => p.pieceType == pieceType.king);
+            var kings = pieces.Where(p => p.pieceType == PieceType.king);
             foreach (var king in kings)
             {
                 king.setMovePattern(-1, 0);
@@ -61,7 +61,7 @@ namespace chess
                 king.setMovePattern(-1, -1);
             }
 
-            var queens = pieces.Where(p => p.pieceType == pieceType.queen);
+            var queens = pieces.Where(p => p.pieceType == PieceType.queen);
             foreach (var queen in queens)
             {
                 for (int i = 1; i < 9; i++)
@@ -77,7 +77,7 @@ namespace chess
                 }
             }
 
-            var rooks = pieces.Where(p => p.pieceType == pieceType.rook);
+            var rooks = pieces.Where(p => p.pieceType == PieceType.rook);
             foreach (var rook in rooks)
             {
                 for (int i = 1; i < 9; i++)
@@ -89,7 +89,7 @@ namespace chess
                 }
             }
 
-            var bishops = pieces.Where(p => p.pieceType == pieceType.bishop);
+            var bishops = pieces.Where(p => p.pieceType == PieceType.bishop);
             foreach (var bishop in bishops)
             {
                 for (int i = 1; i < 9; i++)
@@ -101,7 +101,7 @@ namespace chess
                 }
             }
 
-            var knights = pieces.Where(p => p.pieceType == pieceType.knight);
+            var knights = pieces.Where(p => p.pieceType == PieceType.knight);
             foreach (var knight in knights)
             {
                 knight.setMovePattern(1, 2);
@@ -114,10 +114,10 @@ namespace chess
                 knight.setMovePattern(-2, -1);
             }
 
-            var pawns = pieces.Where(p => p.pieceType == pieceType.pawn);
+            var pawns = pieces.Where(p => p.pieceType == PieceType.pawn);
             foreach (var pawn in pawns)
             {
-                int direction = pawn.pieceColor == pieceColor.white ? 1 : -1;
+                int direction = pawn.pieceColor == PieceColor.white ? 1 : -1;
                 pawn.setMovePattern(0, 1 * direction);
                 pawn.setMovePattern(0, 2 * direction);
             }

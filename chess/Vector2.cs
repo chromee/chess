@@ -1,6 +1,6 @@
 ﻿namespace chess
 {
-    class Vector2
+    public class Vector2
     {
         public int x;
         public int y;

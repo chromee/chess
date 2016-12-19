@@ -7,14 +7,14 @@ namespace chess
 {
     class Piece
     {
-        public pieceColor pieceColor;
-        public pieceType pieceType;
+        public PieceColor pieceColor;
+        public PieceType pieceType;
         public Vector2 position;
         public Image image;
         public List<Vector2> movePatterns = new List<Vector2>();
 
 
-        public Piece(pieceType pType, pieceColor pColor, Vector2 c)
+        public Piece(PieceType pType, PieceColor pColor, Vector2 c)
         {
             pieceColor = pColor;
             pieceType = pType;
@@ -53,19 +53,19 @@ namespace chess
             moveSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
 
             //ポーンは最初だけ２マス進める(チェスの仕様)
-            if (pieceType == pieceType.pawn && movePatterns.Count == 2)
+            if (pieceType == PieceType.pawn && movePatterns.Count == 2)
                 movePatterns.RemoveAt(1);
 
             //ポーンが一番奥まできたらクイーンになるやつ
-            if (pieceType == pieceType.pawn && pieceColor == pieceColor.white && position.y == 8)
+            if (pieceType == PieceType.pawn && pieceColor == PieceColor.white && position.y == 8)
                 pawnChangeToQueen();
-            if (pieceType == pieceType.pawn && pieceColor == pieceColor.black && position.y == 1)
+            if (pieceType == PieceType.pawn && pieceColor == PieceColor.black && position.y == 1)
                 pawnChangeToQueen();
         }
 
-        private void pawnChangeToQueen()
+        public void pawnChangeToQueen()
         {
-            pieceType = pieceType.queen;
+            pieceType = PieceType.queen;
             setPieceImage();
             Board.square[position.x, position.y].button.BackgroundImage = image;
             for (int i = 1; i < 9; i++)
