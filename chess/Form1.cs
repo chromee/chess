@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace chess
 {
@@ -18,7 +10,7 @@ namespace chess
 
             Panel panel = new Panel();
             Board board = new Board(panel, this, label1);
-            PieceSet PieceSet = new PieceSet(this, board);
+            PieceSet PieceSet = new PieceSet();
             board.setPieces(PieceSet);
         }
     }

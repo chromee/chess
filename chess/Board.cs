@@ -17,7 +17,7 @@ namespace chess
 
         Label[] labelHorizontal;
         Label[] labelVertical;
-        public Square[,] BoardSquare;
+        public static Square[,] square;
 
         private pieceColor turnPlayerColor;
         private Label turnLabel;
@@ -48,7 +48,7 @@ namespace chess
             {
                 for (int selectedY = 1; selectedY < 9; selectedY++)
                 {
-                    var selectedSquare = BoardSquare[selectedX, selectedY];
+                    var selectedSquare = square[selectedX, selectedY];
                     if (sender.Equals(selectedSquare.button))
                     {
                         var selectedPiece = pieceSet.pieces.Find(p => p.position.x == selectedX && p.position.y == selectedY);
@@ -127,13 +127,13 @@ namespace chess
 
         private void createBoard()
         {
-            BoardSquare = new Square[9, 9];
+            square = new Square[9, 9];
             for (int x = 1; x < 9; x++)
             {
                 for (int y = 1; y < 9; y++)
                 {
                     var btn = new Button();
-                    BoardSquare[x, y] = new Square(new Vector2(x, y), btn);
+                    square[x, y] = new Square(new Vector2(x, y), btn);
                     setSquareButton(btn, x, y);
                     setHorizontalLabel();
                     setVerticalLabel();
@@ -210,8 +210,8 @@ namespace chess
                 bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
                 if (inBoard && selectedPiece.pieceType != pieceType.pawn)
                 {
-                    canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
-                    BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                    canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                    square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
                 if (selectedPiece.pieceType == pieceType.pawn)
                 {
@@ -239,13 +239,13 @@ namespace chess
                     .Any(p => (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceColor != selectedPiece.pieceColor));
             if (isPieceOnRightFront)
             {
-                canMoveSquares.Add(BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection]);
-                BoardSquare[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
+                canMoveSquares.Add(square[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection]);
+                square[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
             }
             if (isPieceOnLeftFront)
             {
-                canMoveSquares.Add(BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection]);
-                BoardSquare[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
+                canMoveSquares.Add(square[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection]);
+                square[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
             }
 
             //正面の駒が存在する場合は正面のマスを移動可能領域から除外
@@ -255,13 +255,13 @@ namespace chess
                     .Any(p => (p.position.x == selectedPiece.position.x && p.position.y == selectedPiece.position.y + moveDirection * 2));
             if (!isPieceOnFront && (movePatternY == 1 || movePatternY == -1))
             {
-                canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
-                BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
             }
             if (!isPieceOnFront && !isPieceOnTwoFront && (movePatternY == 2 || movePatternY == -2))
             {
-                canMoveSquares.Add(BoardSquare[moveToPosX, moveToPosY]);
-                BoardSquare[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
+                canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
             }
         }
 
@@ -284,20 +284,20 @@ namespace chess
                         {
                             if (relativePos.y > 0)
                                 for (int i = PieceOnMoveSquare.position.y; i < 9; i++)
-                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
+                                    removeSquares.Add(square[PieceOnMoveSquare.position.x, i]);
                             else if (relativePos.y < 0)
                                 for (int i = PieceOnMoveSquare.position.y; i > 0; i--)
-                                    removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x, i]);
+                                    removeSquares.Add(square[PieceOnMoveSquare.position.x, i]);
                         }
                         //横方向
                         else if (relativePos.y == 0)
                         {
                             if (relativePos.x > 0)
                                 for (int i = PieceOnMoveSquare.position.x; i < 9; i++)
-                                    removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
+                                    removeSquares.Add(square[i, PieceOnMoveSquare.position.y]);
                             else if (relativePos.x < 0)
                                 for (int i = PieceOnMoveSquare.position.x; i > 0; i--)
-                                    removeSquares.Add(BoardSquare[i, PieceOnMoveSquare.position.y]);
+                                    removeSquares.Add(square[i, PieceOnMoveSquare.position.y]);
                         }
                         //右斜め上方向
                         else if ((relativePos.x > 0 && relativePos.y > 0) || (relativePos.x < 0 && relativePos.y < 0))
@@ -308,13 +308,13 @@ namespace chess
                                 if (PieceOnMoveSquare.position.x < PieceOnMoveSquare.position.y)
                                     for (int y = PieceOnMoveSquare.position.y; y < 9; y++)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
                                         i++;
                                     }
                                 else
                                     for (int x = PieceOnMoveSquare.position.x; x < 9; x++)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y + i]);
                                         i++;
                                     }
                             }
@@ -324,13 +324,13 @@ namespace chess
                                 if (PieceOnMoveSquare.position.x > PieceOnMoveSquare.position.y)
                                     for (int y = PieceOnMoveSquare.position.y; y > 0; y--)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
                                         i++;
                                     }
                                 else
                                     for (int x = PieceOnMoveSquare.position.x; x > 0; x--)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y - i]);
                                         i++;
                                     }
                             }
@@ -346,13 +346,13 @@ namespace chess
                                 if (PieceOnMoveSquare.position.x + PieceOnMoveSquare.position.y < 9)
                                     for (int x = PieceOnMoveSquare.position.x; x > 0; x--)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
                                         i++;
                                     }
                                 else
                                     for (int y = PieceOnMoveSquare.position.y; y < 9; y++)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x - i, PieceOnMoveSquare.position.y + i]);
                                         i++;
                                     }
                             }
@@ -362,19 +362,19 @@ namespace chess
                                 if (PieceOnMoveSquare.position.x + PieceOnMoveSquare.position.y < 9)
                                     for (int y = PieceOnMoveSquare.position.y; y > 0; y--)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
                                         i++;
                                     }
                                 else
                                     for (int x = PieceOnMoveSquare.position.x; x < 9; x++)
                                     {
-                                        removeSquares.Add(BoardSquare[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
+                                        removeSquares.Add(square[PieceOnMoveSquare.position.x + i, PieceOnMoveSquare.position.y - i]);
                                         i++;
                                     }
                             }
                         }
                         if (PieceOnMoveSquare.pieceColor != selectedPiece.pieceColor)
-                            removeSquares.Remove(BoardSquare[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
+                            removeSquares.Remove(square[PieceOnMoveSquare.position.x, PieceOnMoveSquare.position.y]);
                     }
                 }
             }
@@ -408,7 +408,7 @@ namespace chess
 
         private void movePiece(Piece movePiece, Square selectedSquare)
         {
-            BoardSquare[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
+            square[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
             movePiece.position = new Vector2(selectedSquare.position.x, selectedSquare.position.y);
             selectedSquare.button.BackgroundImage = movePiece.image;
             selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
@@ -440,7 +440,7 @@ namespace chess
         {
             pawn.pieceType = pieceType.queen;
             pawn.setPieceImage();
-            BoardSquare[pawn.position.x, pawn.position.y].button.BackgroundImage = pawn.image;
+            square[pawn.position.x, pawn.position.y].button.BackgroundImage = pawn.image;
             for (int i = 1; i < 9; i++)
             {
                 pawn.setMovePattern(-1 * i, 0 * i);
@@ -460,7 +460,7 @@ namespace chess
             {
                 for (int y = 1; y < 9; y++)
                 {
-                    var btn = BoardSquare[x, y].button;
+                    var btn = square[x, y].button;
                     if ((x + y) % 2 == 0)
                         btn.BackColor = Color.LightYellow;
                     else
@@ -477,15 +477,4 @@ namespace chess
             turnPlayerColor = pieceColor.white;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }
