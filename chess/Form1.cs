@@ -1,4 +1,6 @@
 ﻿using System.Windows.Forms;
+using System.Reactive;
+
 
 namespace chess
 {

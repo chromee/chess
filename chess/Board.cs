@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reactive.Linq;
 
 namespace chess
 {
@@ -44,6 +43,11 @@ namespace chess
         List<Square> canMoveSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
+            Observable.Return(1).Subscribe(n =>
+            {
+                MessageBox.Show($"{n}やぞ");
+            });
+
             for (int selectedX = 1; selectedX < 9; selectedX++)
             {
                 for (int selectedY = 1; selectedY < 9; selectedY++)
