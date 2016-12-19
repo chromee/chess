@@ -477,15 +477,4 @@ namespace chess
             turnPlayerColor = pieceColor.white;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

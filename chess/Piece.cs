@@ -7,8 +7,8 @@ namespace chess
 {
     class Piece
     {
-        public pieceColor pieceColor { get; set; }
-        public pieceType pieceType { get; set; }
+        public pieceColor pieceColor;
+        public pieceType pieceType;
         public Vector2 position;
         public Image image;
         public List<Vector2> movePatterns = new List<Vector2>();
