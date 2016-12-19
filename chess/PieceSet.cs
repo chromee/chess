@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Drawing;
 
 enum pieceType { king, queen, rook, bishop, knight, pawn }
 enum pieceColor { white, black }
@@ -13,15 +8,10 @@ namespace chess
 {
     class PieceSet
     {
-        Form form;
-        Board board;
+        public List<Piece> pieces = new List<Piece>();
 
-        public List<Piece> pieces = new List<Piece>(); //左のポーン→右のルーク
-
-        public PieceSet(Form f, Board b)
+        public PieceSet()
         {
-            form = f;
-            board = b;
             setPieces(pieceColor.white);
             setPieces(pieceColor.black);
             setPiecesMovePattern();
@@ -44,16 +34,16 @@ namespace chess
 
             for (int i = 1; i < 9; i++)
             {
-                pieces.Add(new Piece(pieceType.pawn, pCol, new Vector2(i, pawnLine), board));
+                pieces.Add(new Piece(pieceType.pawn, pCol, new Vector2(i, pawnLine)));
             }
-            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(1, otherLine), board));
-            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(2, otherLine), board));
-            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(3, otherLine), board));
-            pieces.Add(new Piece(pieceType.queen, pCol, new Vector2(4, otherLine), board));
-            pieces.Add(new Piece(pieceType.king, pCol, new Vector2(5, otherLine), board));
-            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(6, otherLine), board));
-            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(7, otherLine), board));
-            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(8, otherLine), board));
+            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(1, otherLine)));
+            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(2, otherLine)));
+            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(3, otherLine)));
+            pieces.Add(new Piece(pieceType.queen, pCol, new Vector2(4, otherLine)));
+            pieces.Add(new Piece(pieceType.king, pCol, new Vector2(5, otherLine)));
+            pieces.Add(new Piece(pieceType.bishop, pCol, new Vector2(6, otherLine)));
+            pieces.Add(new Piece(pieceType.knight, pCol, new Vector2(7, otherLine)));
+            pieces.Add(new Piece(pieceType.rook, pCol, new Vector2(8, otherLine)));
         }
 
         public void setPiecesMovePattern()
