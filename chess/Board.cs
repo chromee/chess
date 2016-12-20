@@ -38,13 +38,13 @@ namespace chess
 
         # region "イベント"
         Piece beforeSelectedPiece = null;
-        List<Square> canMoveSquares = new List<Square>();
+        List<Square> moveableSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
-            Observable.Return(1).Subscribe(n =>
-            {
-                MessageBox.Show($"{n}やぞ");
-            });
+            //Observable.Return(1).Subscribe(n =>
+            //{
+            //    MessageBox.Show($"{n}やぞ");
+            //});
 
             for (int selectedX = 1; selectedX < 9; selectedX++)
             {
@@ -63,28 +63,28 @@ namespace chess
                         if (isSelectPiece && !isSelectedPiece && selectedPiece.pieceColor == turnPlayerColor)
                         {
                             beforeSelectedPiece = selectedPiece;
-                            setCanMoveSquares(selectedPiece);
+                            setMoveableSquares(selectedPiece);
                         }
                         //pieace選択 -> square選択
                         else if (isSelectedPiece && isSelectSquare)
                         {
-                            bool isSelectCanMoveSquare = canMoveSquares.Any(s => s.position == selectedSquare.position);
-                            if (isSelectCanMoveSquare)
+                            bool isSelectMoveableSquare = moveableSquares.Any(s => s.position == selectedSquare.position);
+                            if (isSelectMoveableSquare)
                             {
-                                movePiece(beforeSelectedPiece, selectedSquare);
+                                beforeSelectedPiece.move(selectedSquare);
                                 changeTurn(beforeSelectedPiece);
                                 beforeSelectedPiece = null;
-                                resetCanMoveSquares(canMoveSquares);
+                                resetMoveableSquares(moveableSquares);
                             }
                         }
                         //pieace選択 -> 敵pieace選択
                         else if (isSelectedPiece && selectedPiece.pieceColor != beforeSelectedPiece.pieceColor)
                         {
-                            bool isSelectCanMoveSquare = canMoveSquares.Any(s => s.position == selectedSquare.position);
+                            bool isSelectCanMoveSquare = moveableSquares.Any(s => s.position == selectedSquare.position);
                             if (isSelectCanMoveSquare)
                             {
                                 selectedPiece.position = new Vector2(0, 0);
-                                movePiece(beforeSelectedPiece, selectedSquare);
+                                beforeSelectedPiece.move(selectedSquare);
                                 if (selectedPiece.pieceType == PieceType.king)
                                 {
                                     string winPlayer = turnPlayerColor == PieceColor.white ? "白の勝ち" : "黒の勝ち";
@@ -94,7 +94,7 @@ namespace chess
                                 else
                                 {
                                     changeTurn(beforeSelectedPiece);
-                                    resetCanMoveSquares(canMoveSquares);
+                                    resetMoveableSquares(moveableSquares);
                                     beforeSelectedPiece = null;
                                 }
                             }
@@ -102,8 +102,8 @@ namespace chess
                         //pieace選択 -> 味方pieace選択
                         else if (isSelectedPiece && selectedPiece.pieceColor == beforeSelectedPiece.pieceColor)
                         {
-                            resetCanMoveSquares(canMoveSquares);
-                            setCanMoveSquares(selectedPiece);
+                            resetMoveableSquares(moveableSquares);
+                            setMoveableSquares(selectedPiece);
                             beforeSelectedPiece = selectedPiece;
                         }
                     }
@@ -111,7 +111,7 @@ namespace chess
             }
         }
         #endregion
-        
+
         #region"盤面初期化まわり"
         private void setPanelSetting(Panel boardPanel)
         {
@@ -154,6 +154,7 @@ namespace chess
                 btn.BackColor = Color.Tan;
             btn.BackgroundImageLayout = ImageLayout.Zoom;
             btn.TextAlign = ContentAlignment.MiddleCenter;
+            //btn.Text = $"{x}, {y}";
             btn.Click += new EventHandler(board_Click);
         }
 
@@ -203,27 +204,27 @@ namespace chess
         #endregion
 
         #region "駒の移動まわり"
-        private void setCanMoveSquares(Piece selectedPiece)
+        private void setMoveableSquares(Piece selectedPiece)
         {
             foreach (var movePattern in selectedPiece.movePatterns)
             {
                 int moveToPosX = selectedPiece.position.x + movePattern.x;
                 int moveToPosY = selectedPiece.position.y + movePattern.y;
                 bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
-                if (inBoard && selectedPiece.pieceType != PieceType.pawn)
+                if (inBoard && selectedPiece.pieceType == PieceType.pawn)
                 {
-                    canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                    setPawnMoveableSquares(selectedPiece, movePattern.x, movePattern.y);
+                }
+                else if (inBoard && selectedPiece.pieceType != PieceType.pawn)
+                {
+                    moveableSquares.Add(square[moveToPosX, moveToPosY]);
                     square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
                 }
-                if (selectedPiece.pieceType == PieceType.pawn)
-                {
-                    pawnMoveSquares(selectedPiece, movePattern.x, movePattern.y);
-                }
             }
-            removeCannotMovesquares(selectedPiece);
+            removeUnMoveablequares(selectedPiece);
         }
 
-        private void pawnMoveSquares(Piece selectedPiece, int movePatternX, int movePatternY)
+        private void setPawnMoveableSquares(Piece selectedPiece, int movePatternX, int movePatternY)
         {
             int moveToPosX = selectedPiece.position.x + movePatternX;
             int moveToPosY = selectedPiece.position.y + movePatternY;
@@ -241,41 +242,41 @@ namespace chess
                     .Any(p => (p.position.x == selectedPiece.position.x - 1 && p.position.y == selectedPiece.position.y + moveDirection && p.pieceColor != selectedPiece.pieceColor));
             if (isPieceOnRightFront)
             {
-                canMoveSquares.Add(square[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection]);
+                moveableSquares.Add(square[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection]);
                 square[selectedPiece.position.x + 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
             }
             if (isPieceOnLeftFront)
             {
-                canMoveSquares.Add(square[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection]);
+                moveableSquares.Add(square[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection]);
                 square[selectedPiece.position.x - 1, selectedPiece.position.y + moveDirection].button.BackColor = Color.Salmon;
             }
 
-            //正面の駒が存在する場合は正面のマスを移動可能領域から除外
+            //正面の1,2マスに駒が存在する場合は正面のマスを移動可能領域から除外
             bool isPieceOnFront = pieceSet.pieces
                     .Any(p => (p.position.x == selectedPiece.position.x && p.position.y == selectedPiece.position.y + moveDirection));
             bool isPieceOnTwoFront = pieceSet.pieces
                     .Any(p => (p.position.x == selectedPiece.position.x && p.position.y == selectedPiece.position.y + moveDirection * 2));
             if (!isPieceOnFront && (movePatternY == 1 || movePatternY == -1))
             {
-                canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                moveableSquares.Add(square[moveToPosX, moveToPosY]);
                 square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
             }
             if (!isPieceOnFront && !isPieceOnTwoFront && (movePatternY == 2 || movePatternY == -2))
             {
-                canMoveSquares.Add(square[moveToPosX, moveToPosY]);
+                moveableSquares.Add(square[moveToPosX, moveToPosY]);
                 square[moveToPosX, moveToPosY].button.BackColor = Color.Salmon;
             }
         }
 
-        private void removeCannotMovesquares(Piece selectedPiece)
+        private void removeUnMoveablequares(Piece selectedPiece)
         {
             //クイーンとかの一気に移動できる駒が駒を飛び越えて移動できるのをなんとかする
             List<Square> removeSquares = new List<Square>();
             if (selectedPiece.pieceType == PieceType.bishop || selectedPiece.pieceType == PieceType.queen || selectedPiece.pieceType == PieceType.rook)
             {
-                foreach (var canMoveSquare in canMoveSquares)
+                foreach (var moveableSquare in moveableSquares)
                 {
-                    Piece PieceOnMoveSquare = pieceSet.pieces.Find(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y);
+                    Piece PieceOnMoveSquare = pieceSet.pieces.Find(p => p.position.x == moveableSquare.position.x && p.position.y == moveableSquare.position.y);
 
                     if (PieceOnMoveSquare != null)
                     {
@@ -382,50 +383,24 @@ namespace chess
             }
             else  //king, knight, pawn
             {
-                foreach (var canMoveSquare in canMoveSquares)
+                foreach (var moveableSquare in moveableSquares)
                 {
-                    if (pieceSet.pieces.Any(p => p.position.x == canMoveSquare.position.x && p.position.y == canMoveSquare.position.y && p.pieceColor == selectedPiece.pieceColor))
-                        removeSquares.Add(canMoveSquare);
+                    if (pieceSet.pieces.Any(p => p.position.x == moveableSquare.position.x && p.position.y == moveableSquare.position.y && p.pieceColor == selectedPiece.pieceColor))
+                        removeSquares.Add(moveableSquare);
                 }
             }
 
-            //MessageBox.Show($"{}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            removeSquares = removeSquares.Select(s => s).Distinct().ToList();
+            //MessageBox.Show($"{a.Count}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             foreach (var removeSquare in removeSquares)
             {
-                //MessageBox.Show($"{removeSquare.position.x}, {removeSquare.position.y}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 removeSquare.resetColor();
-                canMoveSquares.Remove(removeSquare);
+                moveableSquares.Remove(removeSquare);
             }
             removeSquares.Clear();
         }
 
-        
-
-        private void movePiece(Piece movePiece, Square selectedSquare)
-        {
-            square[movePiece.position.x, movePiece.position.y].button.BackgroundImage = null;
-            movePiece.position = new Vector2(selectedSquare.position.x, selectedSquare.position.y);
-            selectedSquare.button.BackgroundImage = movePiece.image;
-            selectedSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
-
-            //ポーンは最初だけ２マス進める(チェスの仕様)
-            if (movePiece.pieceType == PieceType.pawn && movePiece.movePatterns.Count == 2)
-            {
-                movePiece.movePatterns.RemoveAt(1);
-            }
-
-            //ポーンが一番奥まできたらクイーンになるやつ
-            if (movePiece.pieceType == PieceType.pawn && movePiece.pieceColor == PieceColor.white && movePiece.position.y == 8)
-            {
-                movePiece.pawnChangeToQueen();
-            }
-            if (movePiece.pieceType == PieceType.pawn && movePiece.pieceColor == PieceColor.black && movePiece.position.y == 0)
-            {
-                movePiece.pawnChangeToQueen();
-            }
-        }
-
-        private void resetCanMoveSquares(List<Square> resetSquares)
+        private void resetMoveableSquares(List<Square> resetSquares)
         {
             foreach (var square in resetSquares)
             {
