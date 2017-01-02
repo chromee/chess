@@ -26,9 +26,9 @@ namespace chess
         private void setPiecePos()
         {
             setPieceImage();
-            if (Board.square[position.x, position.y] != null)
+            if (Board.squares[position.x, position.y] != null)
             {
-                Board.square[position.x, position.y].button.BackgroundImage = image;
+                Board.squares[position.x, position.y].button.BackgroundImage = image;
             }
         }
 
@@ -47,7 +47,7 @@ namespace chess
         
         public void move(Square moveSquare)
         {
-            Board.square[position.x, position.y].button.BackgroundImage = null;
+            Board.squares[position.x, position.y].button.BackgroundImage = null;
             position = new Vector2(moveSquare.position.x, moveSquare.position.y);
             moveSquare.button.BackgroundImage = image;
             moveSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
@@ -67,7 +67,7 @@ namespace chess
         {
             pieceType = PieceType.queen;
             setPieceImage();
-            Board.square[position.x, position.y].button.BackgroundImage = image;
+            Board.squares[position.x, position.y].button.BackgroundImage = image;
             for (int i = 1; i < 9; i++)
             {
                 setMovePattern(-1 * i, 0 * i);

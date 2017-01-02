@@ -10,10 +10,10 @@ namespace chess
         {
             InitializeComponent();
 
-            Panel panel = new Panel();
-            Board board = new Board(panel, this, label1);
-            PieceSet PieceSet = new PieceSet();
-            board.setPieces(PieceSet);
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximumSize = this.Size;
+            
+            Board board = new Board(this, label1);
         }
     }
 }

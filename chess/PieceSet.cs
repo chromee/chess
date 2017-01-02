@@ -8,25 +8,31 @@ namespace chess
 {
     class PieceSet
     {
-        public List<Piece> pieces = new List<Piece>();
+        private PieceColor pieceColor;
+        private List<Piece> pieces = new List<Piece>();
 
-        public PieceSet()
+        public PieceSet(PieceColor pColor)
         {
-            setPieces(PieceColor.white);
-            setPieces(PieceColor.black);
+            pieceColor = pColor;
+            setPieces();
             setPiecesMovePattern();
         }
 
-        public void setPieces(PieceColor pCol)
+        public List<Piece> getPieces()
+        {
+            return pieces;
+        }
+
+        private void setPieces()
         {
             int pawnLine = 0;
             int otherLine = 0;
-            if (pCol == PieceColor.white)
+            if (pieceColor == PieceColor.white)
             {
                 pawnLine = 2;
                 otherLine = 1;
             }
-            else if (pCol == PieceColor.black)
+            else if (pieceColor == PieceColor.black)
             {
                 pawnLine = 7;
                 otherLine = 8;
@@ -34,19 +40,19 @@ namespace chess
 
             for (int i = 1; i < 9; i++)
             {
-                pieces.Add(new Piece(PieceType.pawn, pCol, new Vector2(i, pawnLine)));
+                pieces.Add(new Piece(PieceType.pawn, pieceColor, new Vector2(i, pawnLine)));
             }
-            pieces.Add(new Piece(PieceType.rook, pCol, new Vector2(1, otherLine)));
-            pieces.Add(new Piece(PieceType.knight, pCol, new Vector2(2, otherLine)));
-            pieces.Add(new Piece(PieceType.bishop, pCol, new Vector2(3, otherLine)));
-            pieces.Add(new Piece(PieceType.queen, pCol, new Vector2(4, otherLine)));
-            pieces.Add(new Piece(PieceType.king, pCol, new Vector2(5, otherLine)));
-            pieces.Add(new Piece(PieceType.bishop, pCol, new Vector2(6, otherLine)));
-            pieces.Add(new Piece(PieceType.knight, pCol, new Vector2(7, otherLine)));
-            pieces.Add(new Piece(PieceType.rook, pCol, new Vector2(8, otherLine)));
+            pieces.Add(new Piece(PieceType.rook, pieceColor, new Vector2(1, otherLine)));
+            pieces.Add(new Piece(PieceType.knight, pieceColor, new Vector2(2, otherLine)));
+            pieces.Add(new Piece(PieceType.bishop, pieceColor, new Vector2(3, otherLine)));
+            pieces.Add(new Piece(PieceType.queen, pieceColor, new Vector2(4, otherLine)));
+            pieces.Add(new Piece(PieceType.king, pieceColor, new Vector2(5, otherLine)));
+            pieces.Add(new Piece(PieceType.bishop, pieceColor, new Vector2(6, otherLine)));
+            pieces.Add(new Piece(PieceType.knight, pieceColor, new Vector2(7, otherLine)));
+            pieces.Add(new Piece(PieceType.rook, pieceColor, new Vector2(8, otherLine)));
         }
 
-        public void setPiecesMovePattern()
+        private void setPiecesMovePattern()
         {
             var kings = pieces.Where(p => p.pieceType == PieceType.king);
             foreach (var king in kings)
