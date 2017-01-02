@@ -11,7 +11,7 @@ namespace chess
     {
         Form form;
 
-        private List<Piece> pieces = new List<Piece>();
+        public static List<Piece> pieces = new List<Piece>();
         public static Square[,] squares = new Square[9, 9];
 
         private PieceColor turnPlayerColor;
@@ -31,10 +31,8 @@ namespace chess
         List<Square> moveableSquares = new List<Square>();
         private void board_Click(object sender, EventArgs e)
         {
-            //Observable.Return(1).Subscribe(n =>
-            //{
-            //    MessageBox.Show($"{n}やぞ");
-            //});
+            //foreach(var p in pieces)
+            //    MessageBox.Show($"{p.pieceColor}{p.pieceType} : {p.position.x}, {p.position.y}");
 
             for (int selectedX = 1; selectedX < 9; selectedX++)
             {
@@ -139,8 +137,8 @@ namespace chess
         private void setPieces()
         {
             PieceSet whitePieces = new PieceSet(PieceColor.white);
-            PieceSet blackPieces = new PieceSet(PieceColor.black);
             pieces.AddRange(whitePieces.getPieces());
+            PieceSet blackPieces = new PieceSet(PieceColor.black);
             pieces.AddRange(blackPieces.getPieces());
         }
 
@@ -392,6 +390,6 @@ namespace chess
             setPieces();
             turnPlayerColor = PieceColor.white;
         }
-        #endregion  
+        #endregion
     }
 }

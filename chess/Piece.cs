@@ -85,6 +85,11 @@ namespace chess
         {
             return pieceColor != piece.pieceColor;
         }
+
+        public bool isExist(Vector2 pos)
+        {
+            return pos.x == position.x && pos.y == position.y;
+        }
         
     }
 }
