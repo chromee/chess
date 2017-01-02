@@ -12,8 +12,8 @@ namespace chess
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximumSize = this.Size;
-            
-            Board board = new Board(this, label1);
+
+            Board board = new Board(this);
         }
     }
 }

@@ -15,15 +15,15 @@ namespace chess
         public static Square[,] squares = new Square[9, 9];
 
         private PieceColor turnPlayerColor;
-        private Label turnLabel;
+        private Label turnLabel = new Label();
 
-        public Board(Form f, Label L)
+        public Board(Form f)
         {
             form = f;
-            turnLabel = L;
-            createBoard();
-            setPieces();
             turnPlayerColor = PieceColor.white;
+            createBoard();
+            setLabel();
+            setPieces();
         }
 
         #region "イベント"
@@ -115,13 +115,13 @@ namespace chess
                 {
                     var btn = new Button();
                     squares[x, y] = new Square(new Vector2(x, y), btn);
-                    setSquareButton(btn, x, y);
+                    setSquareButtonProperties(btn, x, y);
                     form.Controls.Add(btn);
                 }
             }
         }
 
-        private void setSquareButton(Button btn, int x, int y)
+        private void setSquareButtonProperties(Button btn, int x, int y)
         {
             btn.Top = squareSize * 8 - squareSize * y + boardTopPadding;
             btn.Left = squareSize * x + boardLeftPadding;
@@ -133,7 +133,6 @@ namespace chess
                 btn.BackColor = Color.Tan;
             btn.BackgroundImageLayout = ImageLayout.Zoom;
             btn.TextAlign = ContentAlignment.MiddleCenter;
-            //btn.Text = $"{x}, {y}";
             btn.Click += new EventHandler(board_Click);
         }
 
@@ -143,6 +142,18 @@ namespace chess
             PieceSet blackPieces = new PieceSet(PieceColor.black);
             pieces.AddRange(whitePieces.getPieces());
             pieces.AddRange(blackPieces.getPieces());
+        }
+
+        private void setLabel()
+        {
+            turnLabel.Top = 0;
+            turnLabel.Left = 230;
+            turnLabel.Width = 300;
+            turnLabel.Height = 75;
+            turnLabel.Text = $"{turnPlayerColor} turn";
+            turnLabel.TextAlign = ContentAlignment.MiddleCenter;
+            turnLabel.Font = new Font(turnLabel.Font.OriginalFontName, 30);
+            form.Controls.Add(turnLabel);
         }
         #endregion
 

@@ -71,7 +71,6 @@
     <Compile Include="Board.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Vector2.cs" />
-    <Compile Include="ViewModel\PieceViewModel.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,10 +108,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-    <Folder Include="View\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="piece\black_bishop.png" />
     <Content Include="piece\black_king.png" />
