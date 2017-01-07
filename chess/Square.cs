@@ -7,11 +7,18 @@ namespace chess
     {
         public Vector2 position;
         public Button button;
+        public bool isMoveable = false;
 
         public Square(Vector2 pos, Button btn)
         {
             position = new Vector2(pos.x, pos.y);
+            isMoveable = false;
             button = btn;
+        }
+
+        public void SetImage(Image img)
+        {
+            button.BackgroundImage = img;
         }
 
         public void resetColor()
@@ -20,6 +27,18 @@ namespace chess
                 button.BackColor = Color.LightYellow;
             else
                 button.BackColor = Color.Tan;
+        }
+
+        public void Moveable()
+        {
+            isMoveable = true;
+            button.BackColor = Color.Salmon;
+        }
+
+        public void UnMoveable()
+        {
+            isMoveable = false;
+            resetColor();
         }
     }
 }

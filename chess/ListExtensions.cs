@@ -33,5 +33,29 @@ namespace chess
         {
             self.Insert(0, item);
         }
+
+        public struct IndexedItem2<T>
+        {
+            public T Element { get; }
+            public int X { get; }
+            public int Y { get; }
+            internal IndexedItem2(T element, int x, int y)
+            {
+                this.Element = element;
+                this.X = x;
+                this.Y = y;
+            }
+        }
+
+        //--- 拡張メソッド
+        public static IEnumerable<IndexedItem2<T>> WithIndex<T>(this T[,] self)
+        {
+            if (self == null)
+                throw new ArgumentNullException(nameof(self));
+
+            for (int x = 0; x < self.GetLength(0); x++)
+                for (int y = 0; y < self.GetLength(1); y++)
+                    yield return new IndexedItem2<T>(self[x, y], x, y);
+        }
     }
 }

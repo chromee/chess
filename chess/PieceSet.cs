@@ -10,8 +10,8 @@ namespace chess
     class PieceSet
     {
         private PieceColor pieceColor;
-        private List<Piece> pieces = new List<Piece>();
-        public int randomLevel = 0;
+        public List<Piece> pieces = new List<Piece>();
+        public int randomLevel = 2;
 
         public PieceSet(PieceColor pColor)
         {
@@ -29,11 +29,6 @@ namespace chess
                     break;
             }
             setPiecesMovePattern();
-        }
-
-        public List<Piece> getPieces()
-        {
-            return pieces;
         }
 
         private void setPieces()
@@ -171,12 +166,12 @@ namespace chess
             }
         }
 
-        public bool isExistPiecePosition(Vector2 position)
+        private bool isExistPiecePosition(Vector2 position)
         {
             return this.pieces.Any(p => p.isExist(position)) || Board.pieces.Any(p => p.isExist(position));
         }
 
-        public Vector2 PieceNotExistPos()
+        private Vector2 PieceNotExistPos()
         {
             while (true)
             {

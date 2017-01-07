@@ -9,65 +9,46 @@ namespace chess
     {
         public PieceColor pieceColor;
         public PieceType pieceType;
-        public Vector2 position;
+        private Vector2 position;
+        public Vector2 Position
+        {
+            get { return position; }
+            set
+            {
+                if (position != null)
+                    Board.squares[position.x, position.y].button.BackgroundImage = null;
+                if(value.IsInsideBoard())
+                    Board.squares[value.x, value.y].button.BackgroundImage = image;
+
+                position = value;
+                if (pieceType == PieceType.pawn && ReachLastLine(value))
+                    PawnChangeToQueen();
+            }
+        }
         public Image image;
         public List<Vector2> movePatterns = new List<Vector2>();
 
 
-        public Piece(PieceType pType, PieceColor pColor, Vector2 c)
+        public Piece(PieceType pType, PieceColor pColor, Vector2 pos)
         {
             pieceColor = pColor;
             pieceType = pType;
-            position = c;
-
-            setPiecePos();
+            setImage();
+            Position = pos;
         }
 
-        private void setPiecePos()
-        {
-            setPieceImage();
-            if (Board.squares[position.x, position.y] != null)
-            {
-                Board.squares[position.x, position.y].button.BackgroundImage = image;
-            }
-        }
-
-        public void setPieceImage()
+        private void setImage()
         {
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             var imageDirectory = currentDirectory.Remove(currentDirectory.Length - 10) + $@"\piece\{pieceColor}_{pieceType}.png";
             image = System.Drawing.Image.FromFile(imageDirectory);
         }
 
-        //移動パターン設定
-        public void setMovePattern(int horMove, int verMove)
-        {
-            movePatterns.Add(new Vector2(horMove, verMove));
-        }
-        
-        public void move(Square moveSquare)
-        {
-            Board.squares[position.x, position.y].button.BackgroundImage = null;
-            position = new Vector2(moveSquare.position.x, moveSquare.position.y);
-            moveSquare.button.BackgroundImage = image;
-            moveSquare.button.BackgroundImageLayout = ImageLayout.Zoom;
-
-            //ポーンは最初だけ２マス進める(チェスの仕様)
-            if (pieceType == PieceType.pawn && movePatterns.Count == 2)
-                movePatterns.RemoveAt(1);
-
-            //ポーンが一番奥まできたらクイーンになるやつ
-            if (pieceType == PieceType.pawn && pieceColor == PieceColor.white && position.y == 8)
-                pawnChangeToQueen();
-            if (pieceType == PieceType.pawn && pieceColor == PieceColor.black && position.y == 1)
-                pawnChangeToQueen();
-        }
-
-        public void pawnChangeToQueen()
+        private void PawnChangeToQueen()
         {
             pieceType = PieceType.queen;
-            setPieceImage();
-            Board.squares[position.x, position.y].button.BackgroundImage = image;
+            setImage();
+            Board.squares[Position.x, Position.y].button.BackgroundImage = image;
             for (int i = 1; i < 9; i++)
             {
                 setMovePattern(-1 * i, 0 * i);
@@ -81,6 +62,26 @@ namespace chess
             }
         }
 
+        private bool ReachLastLine(Vector2 pos)
+        {
+            return (pieceColor == PieceColor.white && pos.y == 8) || (pieceColor == PieceColor.black && pos.y == 1);
+        }
+
+        #region public関数
+        public void move(Square moveSquare)
+        {
+            Position = new Vector2(moveSquare.position.x, moveSquare.position.y);
+
+            //ポーンは最初だけ２マス進めるやつ
+            if (pieceType == PieceType.pawn && movePatterns.Count == 2)
+                movePatterns.RemoveAt(1);
+        }
+
+        public void setMovePattern(int horMove, int verMove)
+        {
+            movePatterns.Add(new Vector2(horMove, verMove));
+        }
+
         public bool isEnemy(Piece piece)
         {
             return pieceColor != piece.pieceColor;
@@ -88,8 +89,14 @@ namespace chess
 
         public bool isExist(Vector2 pos)
         {
-            return pos.x == position.x && pos.y == position.y;
+            return pos.x == Position.x && pos.y == Position.y;
         }
-        
+
+        public bool isLongMoveable()
+        {
+            return pieceType == PieceType.bishop || pieceType == PieceType.queen || pieceType == PieceType.rook;
+        }
+        #endregion
+
     }
 }
