@@ -45,16 +45,7 @@ namespace chess
             Vector2 vec = new Vector2(R.Next(min, max), R.Next(min, max));
             return vec;
         }
-
-        public bool IsSamePos(Vector2 vec)
-        {
-            return vec.x == x && vec.y == y;
-        }
-        public bool IsSamePos(int x_in, int y_in)
-        {
-            return x_in == x && y_in == y;
-        }
-
+        
         public bool IsInsideBoard()
         {
             return x > 0 && x < 9 && y > 0 && y < 9;

@@ -7,13 +7,25 @@ namespace chess
     {
         public Vector2 position;
         public Button button;
-        public bool isMoveable = false;
+        public bool isMoveable;
+        public bool IsMoveable
+        {
+            get { return isMoveable; }
+            set
+            {
+                isMoveable = value;
+                if (isMoveable)
+                    button.BackColor = Color.Salmon;
+                else
+                    ResetColor();
+            }
+        }
 
         public Square(Vector2 pos, Button btn)
         {
             position = new Vector2(pos.x, pos.y);
-            isMoveable = false;
             button = btn;
+            IsMoveable = false;
         }
 
         public void SetImage(Image img)
@@ -21,24 +33,22 @@ namespace chess
             button.BackgroundImage = img;
         }
 
-        public void resetColor()
+        public void ToMoveable()
+        {
+            IsMoveable = true;
+        }
+
+        public void ToUnMoveable()
+        {
+            IsMoveable = false;
+        }
+
+        private void ResetColor()
         {
             if ((position.x + position.y) % 2 == 0)
                 button.BackColor = Color.LightYellow;
             else
                 button.BackColor = Color.Tan;
-        }
-
-        public void Moveable()
-        {
-            isMoveable = true;
-            button.BackColor = Color.Salmon;
-        }
-
-        public void UnMoveable()
-        {
-            isMoveable = false;
-            resetColor();
         }
     }
 }

@@ -19,19 +19,19 @@ namespace chess
             switch (randomLevel)
             {
                 default:
-                    setPieces();
+                    SetPieces();
                     break;
                 case 1:
-                    setPiecesRandomLevel1();
+                    SetPiecesRandomLevel1();
                     break;
                 case 2:
-                    setPiecesRandomLevel2();
+                    SetPiecesRandomLevel2();
                     break;
             }
-            setPiecesMovePattern();
+            SetPiecesMovePattern();
         }
 
-        private void setPieces()
+        private void SetPieces()
         {
             int pawnLine = pieceColor == PieceColor.white ? 2 : 7;
             int otherLine = pieceColor == PieceColor.white ? 1 : 8;
@@ -49,7 +49,7 @@ namespace chess
             pieces.Add(new Piece(PieceType.rook, pieceColor, new Vector2(8, otherLine)));
         }
 
-        private void setPiecesRandomLevel1()
+        private void SetPiecesRandomLevel1()
         {
             int pawnLine = pieceColor == PieceColor.white ? 2 : 7;
             int otherLine = pieceColor == PieceColor.white ? 1 : 8;
@@ -75,33 +75,33 @@ namespace chess
             pieces.Add(new Piece(PieceType.rook, pieceColor, positions.Pop(R.Next(positions.Count))));
         }
 
-        private void setPiecesRandomLevel2()
+        private void SetPiecesRandomLevel2()
         {
             for (int i = 1; i < 9; i++)
-                pieces.Add(new Piece(PieceType.pawn, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.rook, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.knight, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.bishop, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.queen, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.king, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.bishop, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.knight, pieceColor, PieceNotExistPos()));
-            pieces.Add(new Piece(PieceType.rook, pieceColor, PieceNotExistPos()));
+                pieces.Add(new Piece(PieceType.pawn, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.rook, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.knight, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.bishop, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.queen, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.king, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.bishop, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.knight, pieceColor, GetPieceNotExistPos()));
+            pieces.Add(new Piece(PieceType.rook, pieceColor, GetPieceNotExistPos()));
         }
 
-        private void setPiecesMovePattern()
+        private void SetPiecesMovePattern()
         {
             var kings = pieces.Where(p => p.pieceType == PieceType.king);
             foreach (var king in kings)
             {
-                king.setMovePattern(-1, 0);
-                king.setMovePattern(-1, 1);
-                king.setMovePattern(0, 1);
-                king.setMovePattern(1, 1);
-                king.setMovePattern(1, 0);
-                king.setMovePattern(1, -1);
-                king.setMovePattern(0, -1);
-                king.setMovePattern(-1, -1);
+                king.SetMovePattern(-1, 0);
+                king.SetMovePattern(-1, 1);
+                king.SetMovePattern(0, 1);
+                king.SetMovePattern(1, 1);
+                king.SetMovePattern(1, 0);
+                king.SetMovePattern(1, -1);
+                king.SetMovePattern(0, -1);
+                king.SetMovePattern(-1, -1);
             }
 
             var queens = pieces.Where(p => p.pieceType == PieceType.queen);
@@ -109,14 +109,14 @@ namespace chess
             {
                 for (int i = 1; i < 9; i++)
                 {
-                    queen.setMovePattern(-1 * i, 0 * i);
-                    queen.setMovePattern(-1 * i, 1 * i);
-                    queen.setMovePattern(0 * i, 1 * i);
-                    queen.setMovePattern(1 * i, 1 * i);
-                    queen.setMovePattern(1 * i, 0 * i);
-                    queen.setMovePattern(1 * i, -1 * i);
-                    queen.setMovePattern(0 * i, -1 * i);
-                    queen.setMovePattern(-1 * i, -1 * i);
+                    queen.SetMovePattern(-1 * i, 0 * i);
+                    queen.SetMovePattern(-1 * i, 1 * i);
+                    queen.SetMovePattern(0 * i, 1 * i);
+                    queen.SetMovePattern(1 * i, 1 * i);
+                    queen.SetMovePattern(1 * i, 0 * i);
+                    queen.SetMovePattern(1 * i, -1 * i);
+                    queen.SetMovePattern(0 * i, -1 * i);
+                    queen.SetMovePattern(-1 * i, -1 * i);
                 }
             }
 
@@ -125,10 +125,10 @@ namespace chess
             {
                 for (int i = 1; i < 9; i++)
                 {
-                    rook.setMovePattern(1 * i, 0);
-                    rook.setMovePattern(-1 * i, 0);
-                    rook.setMovePattern(0, 1 * i);
-                    rook.setMovePattern(0, -1 * i);
+                    rook.SetMovePattern(1 * i, 0);
+                    rook.SetMovePattern(-1 * i, 0);
+                    rook.SetMovePattern(0, 1 * i);
+                    rook.SetMovePattern(0, -1 * i);
                 }
             }
 
@@ -137,46 +137,46 @@ namespace chess
             {
                 for (int i = 1; i < 9; i++)
                 {
-                    bishop.setMovePattern(1 * i, 1 * i);
-                    bishop.setMovePattern(1 * i, -1 * i);
-                    bishop.setMovePattern(-1 * i, 1 * i);
-                    bishop.setMovePattern(-1 * i, -1 * i);
+                    bishop.SetMovePattern(1 * i, 1 * i);
+                    bishop.SetMovePattern(1 * i, -1 * i);
+                    bishop.SetMovePattern(-1 * i, 1 * i);
+                    bishop.SetMovePattern(-1 * i, -1 * i);
                 }
             }
 
             var knights = pieces.Where(p => p.pieceType == PieceType.knight);
             foreach (var knight in knights)
             {
-                knight.setMovePattern(1, 2);
-                knight.setMovePattern(-1, 2);
-                knight.setMovePattern(1, -2);
-                knight.setMovePattern(-1, -2);
-                knight.setMovePattern(2, 1);
-                knight.setMovePattern(2, -1);
-                knight.setMovePattern(-2, 1);
-                knight.setMovePattern(-2, -1);
+                knight.SetMovePattern(1, 2);
+                knight.SetMovePattern(-1, 2);
+                knight.SetMovePattern(1, -2);
+                knight.SetMovePattern(-1, -2);
+                knight.SetMovePattern(2, 1);
+                knight.SetMovePattern(2, -1);
+                knight.SetMovePattern(-2, 1);
+                knight.SetMovePattern(-2, -1);
             }
 
             var pawns = pieces.Where(p => p.pieceType == PieceType.pawn);
             foreach (var pawn in pawns)
             {
                 int direction = pawn.pieceColor == PieceColor.white ? 1 : -1;
-                pawn.setMovePattern(0, 1 * direction);
-                pawn.setMovePattern(0, 2 * direction);
+                pawn.SetMovePattern(0, 1 * direction);
+                pawn.SetMovePattern(0, 2 * direction);
             }
         }
 
-        private bool isExistPiecePosition(Vector2 position)
+        private bool IsExistPiecePosition(Vector2 position)
         {
-            return this.pieces.Any(p => p.isExist(position)) || Board.pieces.Any(p => p.isExist(position));
+            return this.pieces.Any(p => p.Position == position) || Board.pieces.Any(p => p.Position == position);
         }
 
-        private Vector2 PieceNotExistPos()
+        private Vector2 GetPieceNotExistPos()
         {
             while (true)
             {
                 Vector2 pos = Vector2.Random(1, 9);
-                if (!isExistPiecePosition(pos))
+                if (!IsExistPiecePosition(pos))
                     return pos;
             }
         }

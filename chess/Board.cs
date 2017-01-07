@@ -105,250 +105,69 @@ namespace chess
             bool isSelectSquare = selectedPiece == null;
             bool isSelectedPiece = beforeSelectedPiece != null;
 
-            //pieace選択
+            #region pieace選択
             if (isSelectPiece && !isSelectedPiece && selectedPiece.pieceColor == turnPlayerColor)
             {
                 beforeSelectedPiece = selectedPiece;
-                ApplyMoveableSquares(selectedPiece);
+                selectedPiece.ApplyMoveableSquares();
             }
-            //pieace選択 -> square選択
+            #endregion
+            #region pieace選択 -> square選択
             else if (isSelectedPiece && isSelectSquare)
             {
-                if (selectedSquare.isMoveable)
+                if (selectedSquare.IsMoveable)
                 {
-                    beforeSelectedPiece.move(selectedSquare);
-                    changeTurn(beforeSelectedPiece);
+                    beforeSelectedPiece.Move(selectedSquare.position);
+                    ChangeTurn(beforeSelectedPiece);
                     beforeSelectedPiece = null;
                     ResetMoveableSquares();
                 }
             }
-            //pieace選択 -> 敵pieace選択
+            #endregion
+            #region pieace選択 -> 敵pieace選択
             else if (isSelectedPiece && selectedPiece.pieceColor != beforeSelectedPiece.pieceColor)
             {
-                if (selectedSquare.isMoveable)
+                if (selectedSquare.IsMoveable)
                 {
                     selectedPiece.Position = new Vector2(0, 0);
-                    beforeSelectedPiece.move(selectedSquare);
+                    beforeSelectedPiece.Move(selectedSquare.position);
 
                     if (selectedPiece.pieceType == PieceType.king)
                         WinJudge(turnPlayerColor);
                     else
                     {
-                        changeTurn(beforeSelectedPiece);
+                        ChangeTurn(beforeSelectedPiece);
                         ResetMoveableSquares();
                         beforeSelectedPiece = null;
                     }
                 }
             }
-            //pieace選択 -> 味方pieace選択
-            else if (isSelectedPiece && !beforeSelectedPiece.isEnemy(selectedPiece))
+            #endregion
+            #region pieace選択 -> 味方pieace選択
+            else if (isSelectedPiece && !beforeSelectedPiece.IsEnemy(selectedPiece))
             {
                 ResetMoveableSquares();
-                ApplyMoveableSquares(selectedPiece);
+                selectedPiece.ApplyMoveableSquares();
                 beforeSelectedPiece = selectedPiece;
             }
+            #endregion
         }
 
-        private void ApplyMoveableSquares(Piece selectedPiece)
-        {
-            if (selectedPiece.pieceType == PieceType.pawn)
-                ApplyPawnMoveableSquares(selectedPiece);
-            else
-            {
-                foreach (var movePattern in selectedPiece.movePatterns)
-                {
-                    int moveToPosX = selectedPiece.Position.x + movePattern.x;
-                    int moveToPosY = selectedPiece.Position.y + movePattern.y;
-                    bool inBoard = Vector2.IsInsideBoard(moveToPosX, moveToPosY);
-                    if (inBoard)
-                        squares[moveToPosX, moveToPosY].Moveable();
-                }
-                ApplyUnMoveablequares(selectedPiece);
-            }
-        }
-
-        private void ApplyPawnMoveableSquares(Piece selectedPawn)
-        {
-            int moveDirection = selectedPawn.pieceColor == PieceColor.white ? 1 : -1;
-
-            foreach (var movePattern in selectedPawn.movePatterns)
-            {
-                int moveToPosX = selectedPawn.Position.x + movePattern.x;
-                int moveToPosY = selectedPawn.Position.y + movePattern.y;
-
-                bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
-                if (inBoard)
-                {
-                    //正面の1,2マスに駒が存在しない場合のみ移動可能領域に設定
-                    bool isPieceOnFront = pieces
-                        .Any(p => p.Position == new Vector2(selectedPawn.Position.x, selectedPawn.Position.y + moveDirection));
-                    bool isPieceOnTwoFront = pieces
-                            .Any(p => p.Position == new Vector2(selectedPawn.Position.x, selectedPawn.Position.y + moveDirection * 2));
-                    if (!isPieceOnFront && Math.Abs(movePattern.y) == 1)
-                        squares[moveToPosX, moveToPosY].Moveable();
-                    if (!isPieceOnFront && !isPieceOnTwoFront && Math.Abs(movePattern.y) == 2)
-                        squares[moveToPosX, moveToPosY].Moveable();
-                }
-            }
-
-            //ポーンの斜めに敵駒があったら斜め方向のマスを移動可能領域に追加
-            bool isPieceOnRightFront = pieces
-                    .Any(p => (p.Position == new Vector2(selectedPawn.Position.x + 1, selectedPawn.Position.y + moveDirection) && selectedPawn.isEnemy(p)));
-            bool isPieceOnLeftFront = pieces
-                    .Any(p => (p.Position == new Vector2(selectedPawn.Position.x - 1, selectedPawn.Position.y + moveDirection) && selectedPawn.isEnemy(p)));
-            if (isPieceOnRightFront)
-                squares[selectedPawn.Position.x + 1, selectedPawn.Position.y + moveDirection].Moveable();
-            if (isPieceOnLeftFront)
-                squares[selectedPawn.Position.x - 1, selectedPawn.Position.y + moveDirection].Moveable();
-        }
-
-        private void ApplyUnMoveablequares(Piece selectedPiece)
-        {
-            var moveableSquares = GetMoveableSquares();
-
-            if (selectedPiece.isLongMoveable())     //bishop rook queen
-            {
-                foreach (var moveableSquare in moveableSquares)
-                {
-                    if (moveableSquare.isMoveable)
-                    {
-                        Piece pieceOnMoveSquare = pieces.Find(p => p.Position == moveableSquare.position);
-
-                        if (pieceOnMoveSquare != null)
-                        {
-                            Vector2 relativePos = new Vector2(pieceOnMoveSquare.Position.x - selectedPiece.Position.x, pieceOnMoveSquare.Position.y - selectedPiece.Position.y);
-
-                            #region 縦方向
-                            if (relativePos.x == 0)
-                            {
-                                if (relativePos.y > 0)
-                                    for (int i = pieceOnMoveSquare.Position.y; i < 9; i++)
-                                        squares[pieceOnMoveSquare.Position.x, i].UnMoveable();
-                                else if (relativePos.y < 0)
-                                    for (int i = pieceOnMoveSquare.Position.y; i > 0; i--)
-                                        squares[pieceOnMoveSquare.Position.x, i].UnMoveable();
-                            }
-                            #endregion
-                            #region 横方向
-                            else if (relativePos.y == 0)
-                            {
-                                if (relativePos.x > 0)
-                                    for (int i = pieceOnMoveSquare.Position.x; i < 9; i++)
-                                        squares[i, pieceOnMoveSquare.Position.y].UnMoveable();
-                                else if (relativePos.x < 0)
-                                    for (int i = pieceOnMoveSquare.Position.x; i > 0; i--)
-                                        squares[i, pieceOnMoveSquare.Position.y].UnMoveable();
-                            }
-                            #endregion
-                            #region 右斜め上方向
-                            else if ((relativePos.x > 0 && relativePos.y > 0) || (relativePos.x < 0 && relativePos.y < 0))
-                            {
-                                if (relativePos.x > 0 && relativePos.y > 0)
-                                {
-                                    var i = 0;
-                                    if (pieceOnMoveSquare.Position.x < pieceOnMoveSquare.Position.y)
-                                        for (int y = pieceOnMoveSquare.Position.y; y < 9; y++)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x + i, pieceOnMoveSquare.Position.y + i].UnMoveable();
-                                            i++;
-                                        }
-                                    else
-                                        for (int x = pieceOnMoveSquare.Position.x; x < 9; x++)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x + i, pieceOnMoveSquare.Position.y + i].UnMoveable();
-                                            i++;
-                                        }
-                                }
-                                else if (relativePos.x < 0 && relativePos.y < 0)
-                                {
-                                    var i = 0;
-                                    if (pieceOnMoveSquare.Position.x > pieceOnMoveSquare.Position.y)
-                                        for (int y = pieceOnMoveSquare.Position.y; y > 0; y--)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x - i, pieceOnMoveSquare.Position.y - i].UnMoveable();
-                                            i++;
-                                        }
-                                    else
-                                        for (int x = pieceOnMoveSquare.Position.x; x > 0; x--)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x - i, pieceOnMoveSquare.Position.y - i].UnMoveable();
-                                            i++;
-                                        }
-                                }
-                            }
-                            #endregion
-                            #region 左斜め上方向
-                            else if ((relativePos.x < 0 && relativePos.y > 0) || (relativePos.x > 0 && relativePos.y < 0))
-                            {
-                                //左斜め上からのboardの中線(1,8) => (8,1)のラインが判定の分かれ目
-                                //左上に上る場合，中線より左側はx=0がy=9より先にくる，中線より右側はy=9がx=0より先に来る。
-                                if (relativePos.x < 0 && relativePos.y > 0)
-                                {
-                                    var i = 0;
-                                    if (pieceOnMoveSquare.Position.x + pieceOnMoveSquare.Position.y < 9)
-                                        for (int x = pieceOnMoveSquare.Position.x; x > 0; x--)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x - i, pieceOnMoveSquare.Position.y + i].UnMoveable();
-                                            i++;
-                                        }
-                                    else
-                                        for (int y = pieceOnMoveSquare.Position.y; y < 9; y++)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x - i, pieceOnMoveSquare.Position.y + i].UnMoveable();
-                                            i++;
-                                        }
-                                }
-                                else if (relativePos.x > 0 && relativePos.y < 0)
-                                {
-                                    var i = 0;
-                                    if (pieceOnMoveSquare.Position.x + pieceOnMoveSquare.Position.y < 9)
-                                        for (int y = pieceOnMoveSquare.Position.y; y > 0; y--)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x + i, pieceOnMoveSquare.Position.y - i].UnMoveable();
-                                            i++;
-                                        }
-                                    else
-                                        for (int x = pieceOnMoveSquare.Position.x; x < 9; x++)
-                                        {
-                                            squares[pieceOnMoveSquare.Position.x + i, pieceOnMoveSquare.Position.y - i].UnMoveable();
-                                            i++;
-                                        }
-                                }
-                            }
-                            #endregion
-
-                            if (pieceOnMoveSquare.isEnemy(selectedPiece))
-                                squares[pieceOnMoveSquare.Position.x, pieceOnMoveSquare.Position.y].Moveable();
-                        }
-                    }
-                }
-            }
-            else  //king, knight, pawn
-            {
-                foreach (var moveableSquare in moveableSquares)
-                {
-                    bool isExistAlly = pieces.Any(piece => piece.Position == moveableSquare.position && !piece.isEnemy(selectedPiece));
-                    if (isExistAlly)
-                        moveableSquare.UnMoveable();
-                }
-            }
-        }
-
-        private void ResetMoveableSquares()
+        public static void ResetMoveableSquares()
         {
             var moveableSquares = GetMoveableSquares();
             foreach (var square in moveableSquares)
-                square.UnMoveable();
+                square.ToUnMoveable();
         }
 
-        private List<Square> GetMoveableSquares()
+        public static List<Square> GetMoveableSquares()
         {
             var moveableSquares = new List<Square>();
             for (int x = 1; x < 9; x++)
             {
                 for (int y = 1; y < 9; y++)
                 {
-                    if (squares[x, y].isMoveable)
+                    if (squares[x, y].IsMoveable)
                         moveableSquares.Add(squares[x, y]);
                 }
             }
@@ -358,7 +177,7 @@ namespace chess
         #endregion
 
         #region "ゲームシステムまわり"
-        private void changeTurn(Piece beforeSelectedPiece)
+        private void ChangeTurn(Piece beforeSelectedPiece)
         {
             turnPlayerColor = beforeSelectedPiece.pieceColor == PieceColor.white ? PieceColor.black : PieceColor.white;
             turnLabel.Text = $"{turnPlayerColor} turn";
@@ -368,10 +187,10 @@ namespace chess
         {
             string JudgeText = winPlayerColor == PieceColor.white ? "白の勝ち" : "黒の勝ち";
             MessageBox.Show($"{JudgeText}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            resetBoard();
+            ResetBoard();
         }
 
-        private void resetBoard()
+        private void ResetBoard()
         {
             for (int x = 1; x < 9; x++)
             {
