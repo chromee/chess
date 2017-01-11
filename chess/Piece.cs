@@ -102,6 +102,25 @@ namespace chess
             }
         }
 
+        public void ApplyMoveableSquares(List<Piece> pieces)
+        {
+            Board.ResetMoveableSquares();
+            if (pieceType == PieceType.pawn)
+                ApplyPawnMoveableSquares(pieces);
+            else
+            {
+                foreach (var movePattern in movePatterns)
+                {
+                    int moveToPosX = Position.x + movePattern.x;
+                    int moveToPosY = Position.y + movePattern.y;
+                    bool inBoard = Vector2.IsInsideBoard(moveToPosX, moveToPosY);
+                    if (inBoard)
+                        Board.squares[moveToPosX, moveToPosY].ToMoveable();
+                }
+                ApplyUnMoveablequares();
+            }
+        }
+
         private void ApplyPawnMoveableSquares()
         {
             int moveDirection = pieceColor == PieceColor.white ? 1 : -1;
@@ -130,6 +149,41 @@ namespace chess
             bool isPieceOnRightFront = Board.pieces
                     .Any(p => p.Position == new Vector2(Position.x + 1, Position.y + moveDirection) && IsEnemy(p));
             bool isPieceOnLeftFront = Board.pieces
+                    .Any(p => p.Position == new Vector2(Position.x - 1, Position.y + moveDirection) && IsEnemy(p));
+            if (isPieceOnRightFront)
+                Board.squares[Position.x + 1, Position.y + moveDirection].ToMoveable();
+            if (isPieceOnLeftFront)
+                Board.squares[Position.x - 1, Position.y + moveDirection].ToMoveable();
+        }
+
+        private void ApplyPawnMoveableSquares(List<Piece> pieces)
+        {
+            int moveDirection = pieceColor == PieceColor.white ? 1 : -1;
+
+            foreach (var movePattern in movePatterns)
+            {
+                int moveToPosX = Position.x + movePattern.x;
+                int moveToPosY = Position.y + movePattern.y;
+
+                bool inBoard = moveToPosX > 0 && moveToPosX < 9 && moveToPosY > 0 && moveToPosY < 9;
+                if (inBoard)
+                {
+                    //正面の1,2マスに駒が存在しない場合のみ移動可能領域に設定
+                    bool isPieceOnFront = pieces
+                        .Any(p => p.Position == new Vector2(Position.x, Position.y + moveDirection));
+                    bool isPieceOnTwoFront = pieces
+                        .Any(p => p.Position == new Vector2(Position.x, Position.y + moveDirection * 2));
+                    if (!isPieceOnFront && Math.Abs(movePattern.y) == 1)
+                        Board.squares[moveToPosX, moveToPosY].ToMoveable();
+                    if (!isPieceOnFront && !isPieceOnTwoFront && Math.Abs(movePattern.y) == 2)
+                        Board.squares[moveToPosX, moveToPosY].ToMoveable();
+                }
+            }
+
+            //ポーンの斜めに敵駒があったら斜め方向のマスを移動可能領域に追加
+            bool isPieceOnRightFront = pieces
+                    .Any(p => p.Position == new Vector2(Position.x + 1, Position.y + moveDirection) && IsEnemy(p));
+            bool isPieceOnLeftFront = pieces
                     .Any(p => p.Position == new Vector2(Position.x - 1, Position.y + moveDirection) && IsEnemy(p));
             if (isPieceOnRightFront)
                 Board.squares[Position.x + 1, Position.y + moveDirection].ToMoveable();

@@ -38,10 +38,13 @@ namespace chess
                         message($"add:{moves[moveIndex].point.ToString()}");
                     }
 
+                    var vertualPieces = new List<Piece>(Board.pieces);
+                    var a = vertualPieces.Find(p => p == piece);
+                    a.Position = moveableSquare.position;
                     //移動先が敵駒の移動可能範囲ならマイナス
                     foreach (var enemy in enemyPieces)
                     {
-                        enemy.ApplyMoveableSquares();
+                        enemy.ApplyMoveableSquares(vertualPieces);
                         var enemyMoveableSquares = Board.GetMoveableSquares();
                         bool IsKilledEnemy = enemyMoveableSquares.Any(square => square.position == moveableSquare.position);
                         if (IsKilledEnemy)
@@ -52,7 +55,7 @@ namespace chess
                         }
                     }
                 }
-                message($"result:{moves[moveIndex].point.ToString()}");
+                message($"result:{piece.pieceType}, ({piece.Position.x}.{piece.Position.y}), {moves[moveIndex].point.ToString()}");
                 moveIndex++;
             }
             return moves;
