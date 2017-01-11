@@ -81,6 +81,7 @@ namespace chess
 
         public void ApplyMoveableSquares()
         {
+            Board.ResetMoveableSquares();
             if (pieceType == PieceType.pawn)
                 ApplyPawnMoveableSquares();
             else
@@ -280,6 +281,27 @@ namespace chess
         public bool IsLongMoveable()
         {
             return pieceType == PieceType.bishop || pieceType == PieceType.queen || pieceType == PieceType.rook;
+        }
+
+        public int GetTypePoint()
+        {
+            switch(pieceType)
+            {
+                case PieceType.pawn:
+                    return 1;
+                case PieceType.knight:
+                    return 3;
+                case PieceType.rook:
+                    return 5;
+                case PieceType.bishop:
+                    return 5;
+                case PieceType.queen:
+                    return 10;
+                case PieceType.king:
+                    return 100;
+                default:
+                    return 0;
+            }
         }
         #endregion
 

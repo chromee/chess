@@ -14,6 +14,9 @@ namespace chess
         public static List<Piece> pieces = new List<Piece>();
         public static Square[,] squares = new Square[9, 9];
 
+        public static bool VSAI = true;
+        public AI ai = new AI(PieceColor.black);
+
         private PieceColor turnPlayerColor;
         private Label turnLabel = new Label();
 
@@ -146,7 +149,6 @@ namespace chess
             #region pieace選択 -> 味方pieace選択
             else if (isSelectedPiece && !beforeSelectedPiece.IsEnemy(selectedPiece))
             {
-                ResetMoveableSquares();
                 selectedPiece.ApplyMoveableSquares();
                 beforeSelectedPiece = selectedPiece;
             }
@@ -179,8 +181,14 @@ namespace chess
         #region "ゲームシステムまわり"
         private void ChangeTurn(Piece beforeSelectedPiece)
         {
-            turnPlayerColor = beforeSelectedPiece.pieceColor == PieceColor.white ? PieceColor.black : PieceColor.white;
+            turnPlayerColor = turnPlayerColor == PieceColor.white ? PieceColor.black : PieceColor.white;
             turnLabel.Text = $"{turnPlayerColor} turn";
+            if(VSAI)
+            {
+                ai.move();
+                turnPlayerColor = turnPlayerColor == PieceColor.white ? PieceColor.black : PieceColor.white;
+                turnLabel.Text = $"{turnPlayerColor} turn";
+            }
         }
 
         private void WinJudge(PieceColor winPlayerColor)

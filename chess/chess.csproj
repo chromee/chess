@@ -71,6 +71,7 @@
     <Compile Include="AI.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="ListExtensions.cs" />
+    <Compile Include="Move.cs" />
     <Compile Include="Square.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Form1.cs">
