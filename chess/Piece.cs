@@ -74,6 +74,10 @@ namespace chess
         {
             Position = pos;
 
+            var enemy = Board.pieces.Find(piece => piece.position == pos && IsEnemy(piece));
+            if (enemy != null)
+                enemy.position = new Vector2(0, 0);
+
             //ポーンは最初だけ２マス進めるやつ
             if (pieceType == PieceType.pawn && movePatterns.Count == 2)
                 movePatterns.RemoveAt(1);
@@ -283,9 +287,14 @@ namespace chess
             return pieceType == PieceType.bishop || pieceType == PieceType.queen || pieceType == PieceType.rook;
         }
 
+        public bool IsAlive()
+        {
+            return position != Vector2.Zero();
+        }
+
         public int GetTypePoint()
         {
-            switch(pieceType)
+            switch (pieceType)
             {
                 case PieceType.pawn:
                     return 1;

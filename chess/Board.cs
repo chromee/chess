@@ -132,7 +132,6 @@ namespace chess
             {
                 if (selectedSquare.IsMoveable)
                 {
-                    selectedPiece.Position = new Vector2(0, 0);
                     beforeSelectedPiece.Move(selectedSquare.position);
 
                     if (selectedPiece.pieceType == PieceType.king)
@@ -216,11 +215,6 @@ namespace chess
             }
             pieces.Clear();
             SetPieces();
-        }
-
-        private void message(string text)
-        {
-            MessageBox.Show(text, "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         #endregion
     }

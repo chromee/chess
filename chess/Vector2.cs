@@ -54,5 +54,10 @@ namespace chess
         {
             return x > 0 && x < 9 && y > 0 && y < 9;
         }
+
+        public static Vector2 Zero()
+        {
+            return new Vector2(0, 0);
+        }
     }
 }
