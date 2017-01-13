@@ -12,7 +12,7 @@ namespace chess
         private PieceColor pieceColor;
         public List<Piece> pieces = new List<Piece>();
 
-        public static int randomLevel = 1;
+        public static int randomLevel = 0;
 
         public PieceSet(PieceColor pColor)
         {
