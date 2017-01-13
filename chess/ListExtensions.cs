@@ -25,5 +25,11 @@ namespace chess
         {
             return self.First(c => selector(c).Equals(self.Max(selector)));
         }
+
+        static Random _Rand = new Random();
+        public static T RandomAt<T>(this IEnumerable<T> ie)
+        {
+            return ie.OrderBy(x => _Rand.Next()).First();
+        }
     }
 }

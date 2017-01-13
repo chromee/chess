@@ -14,18 +14,17 @@ namespace chess
         public static List<Piece> pieces = new List<Piece>();
         public static Square[,] squares = new Square[9, 9];
 
-        public static bool VSAI = true;
         public AI ai = new AI(PieceColor.black);
+        public static bool VSAI = true;
 
-        private PieceColor turnPlayerColor;
         private Label turnLabel = new Label();
+        public PieceColor turnPlayerColor = PieceColor.white;
 
         Piece beforeSelectedPiece = null;
 
         public Board(Form f)
         {
             form = f;
-            turnPlayerColor = PieceColor.white;
             CreateBoard();
             SetLabel();
             SetPieces();
@@ -121,7 +120,7 @@ namespace chess
                 if (selectedSquare.IsMoveable)
                 {
                     beforeSelectedPiece.Move(selectedSquare.position);
-                    ChangeTurn(beforeSelectedPiece);
+                    ChangeTurn();
                     beforeSelectedPiece = null;
                     ResetMoveableSquares();
                 }
@@ -135,10 +134,10 @@ namespace chess
                     beforeSelectedPiece.Move(selectedSquare.position);
 
                     if (selectedPiece.pieceType == PieceType.king)
-                        WinJudge(turnPlayerColor);
+                        WinJudge(selectedPiece);
                     else
                     {
-                        ChangeTurn(beforeSelectedPiece);
+                        ChangeTurn();
                         ResetMoveableSquares();
                         beforeSelectedPiece = null;
                     }
@@ -178,11 +177,27 @@ namespace chess
         #endregion
 
         #region "ゲームシステムまわり"
-        private void ChangeTurn(Piece beforeSelectedPiece)
+        public void WinJudge(Piece selectedPiece)
+        {
+            if (selectedPiece.pieceType == PieceType.king)
+            {
+                string JudgeText = turnPlayerColor == PieceColor.white ? "白の勝ち" : "黒の勝ち";
+                MessageBox.Show($"{JudgeText}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ResetBoard();
+            }
+            else
+            {
+                ChangeTurn();
+                ResetMoveableSquares();
+                beforeSelectedPiece = null;
+            }
+        }
+
+        public void ChangeTurn()
         {
             turnPlayerColor = turnPlayerColor == PieceColor.white ? PieceColor.black : PieceColor.white;
             turnLabel.Text = $"{turnPlayerColor} turn";
-            if(VSAI)
+            if (VSAI)
             {
                 ai.move();
                 turnPlayerColor = turnPlayerColor == PieceColor.white ? PieceColor.black : PieceColor.white;
@@ -190,14 +205,7 @@ namespace chess
             }
         }
 
-        private void WinJudge(PieceColor winPlayerColor)
-        {
-            string JudgeText = winPlayerColor == PieceColor.white ? "白の勝ち" : "黒の勝ち";
-            MessageBox.Show($"{JudgeText}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            ResetBoard();
-        }
-
-        private void ResetBoard()
+        public void ResetBoard()
         {
             for (int x = 1; x < 9; x++)
             {

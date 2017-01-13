@@ -15,11 +15,6 @@ namespace chess
             get { return position; }
             set
             {
-                if (position != null)
-                    Board.squares[position.x, position.y].button.BackgroundImage = null;
-                if (value.IsInsideBoard())
-                    Board.squares[value.x, value.y].button.BackgroundImage = image;
-
                 position = value;
                 if (pieceType == PieceType.pawn && ReachLastLine(value))
                     PawnChangeToQueen();
@@ -28,13 +23,13 @@ namespace chess
         public Image image;
         public List<Vector2> movePatterns = new List<Vector2>();
 
-
         public Piece(PieceType pType, PieceColor pColor, Vector2 pos)
         {
             pieceColor = pColor;
             pieceType = pType;
             SetImage();
             Position = pos;
+            SetImageToSquare(pos);
         }
 
         private void SetImage()
@@ -42,6 +37,14 @@ namespace chess
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             var imageDirectory = currentDirectory.Remove(currentDirectory.Length - 10) + $@"\piece\{pieceColor}_{pieceType}.png";
             image = System.Drawing.Image.FromFile(imageDirectory);
+        }
+
+        private void SetImageToSquare(Vector2 moveToPos)
+        {
+            if (position != null)
+                Board.squares[position.x, position.y].button.BackgroundImage = null;
+            if (moveToPos.IsInsideBoard())
+                Board.squares[moveToPos.x, moveToPos.y].button.BackgroundImage = image;
         }
 
         private void PawnChangeToQueen()
@@ -68,10 +71,10 @@ namespace chess
             return (pieceColor == PieceColor.white && pos.y == 8) || (pieceColor == PieceColor.black && pos.y == 1);
         }
 
-
         #region 移動まわり
         public void Move(Vector2 pos)
         {
+            SetImageToSquare(pos);
             Position = pos;
 
             var enemy = Board.pieces.Find(piece => piece.position == pos && IsEnemy(piece));

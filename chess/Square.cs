@@ -26,6 +26,7 @@ namespace chess
             position = new Vector2(pos.x, pos.y);
             button = btn;
             IsMoveable = false;
+            //button.Text = $"{pos.x}, {pos.y}";
         }
 
         public void SetImage(Image img)
