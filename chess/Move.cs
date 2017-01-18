@@ -12,7 +12,7 @@ namespace chess
         public Vector2 position;
         public int point;
 
-        public Move(Piece pie, Vector2 pos,int p)
+        public Move(Piece pie, Vector2 pos, int p)
         {
             piece = pie;
             position = pos;

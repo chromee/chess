@@ -14,7 +14,7 @@ namespace chess
         public static List<Piece> pieces = new List<Piece>();
         public static Square[,] squares = new Square[9, 9];
 
-        public AI ai = new AI(PieceColor.black);
+        public AI ai;
         public static bool VSAI = true;
 
         private Label turnLabel = new Label();
@@ -28,6 +28,7 @@ namespace chess
             CreateBoard();
             SetLabel();
             SetPieces();
+            ai = new AI(PieceColor.black, this);
         }
 
         private void Square_Click(object sender, EventArgs e)
@@ -181,9 +182,7 @@ namespace chess
         {
             if (selectedPiece.pieceType == PieceType.king)
             {
-                string JudgeText = turnPlayerColor == PieceColor.white ? "白の勝ち" : "黒の勝ち";
-                MessageBox.Show($"{JudgeText}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ResetBoard();
+                Win(turnPlayerColor);
             }
             else
             {
@@ -191,6 +190,13 @@ namespace chess
                 ResetMoveableSquares();
                 beforeSelectedPiece = null;
             }
+        }
+
+        public void Win(PieceColor color)
+        {
+            string JudgeText = color == PieceColor.white ? "白の勝ち" : "黒の勝ち";
+            MessageBox.Show($"{JudgeText}", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            ResetBoard();
         }
 
         public void ChangeTurn()
@@ -223,6 +229,7 @@ namespace chess
             }
             pieces.Clear();
             SetPieces();
+            ai.canKillKing = false;
         }
         #endregion
     }

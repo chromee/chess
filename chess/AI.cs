@@ -7,11 +7,14 @@ namespace chess
 {
     class AI
     {
-        private PieceColor pieceType;
+        private PieceColor pieceColor;
+        private Board board;
+        public bool canKillKing = false;
 
-        public AI(PieceColor pt)
+        public AI(PieceColor pc, Board b)
         {
-            pieceType = pt;
+            pieceColor = pc;
+            board = b;
         }
 
         private List<Move> CheckMoves(PieceColor color)
@@ -36,7 +39,8 @@ namespace chess
                     if (killableEnemy != null)
                     {
                         moves[moveIndex].point += killableEnemy.GetTypePoint();
-                        //message($"killable:{killableEnemy.Position.x.ToString()},  {killableEnemy.Position.y.ToString()}");
+                        if (killableEnemy.pieceType == PieceType.king)
+                            canKillKing = true;
                     }
                     #endregion
 
@@ -45,18 +49,17 @@ namespace chess
                     {
                         enemy.ApplyMoveableSquares();
                         var enemyMoveableSquares = Board.GetMoveableSquares();
-                        bool IsKilledEnemy = enemyMoveableSquares.Any(square => square.position == moveableSquare.position);
-                        if (IsKilledEnemy)
+                        foreach (var enemyMoveableSquare in enemyMoveableSquares)
                         {
-                            moves[moveIndex].point -= piece.GetTypePoint();
-                            //message($"killed:{enemy.pieceType.ToString()}, pos:{moveableSquare.position.x}, {moveableSquare.position.y}");
+                            var killedAlly = Board.pieces.Find(p => p.Position == enemyMoveableSquare.position);
+                            if (killedAlly != null)
+                                moves[moveIndex].point -= killedAlly.GetTypePoint();
                         }
                     }
                     #endregion
                     piece.Position = pieceCorrectPos;
                     moveIndex++;
                 }
-                //message($"result:{piece.pieceType}, ({piece.Position.x}.{piece.Position.y}), {moves[moveIndex].point.ToString()}");
             }
             return moves;
         }
@@ -65,21 +68,16 @@ namespace chess
         {
             int maxPoint = moves.Max(move => move.point);
             Move bestMove = moves.Where(move => move.point == maxPoint).RandomAt();
-            //message(bestMove.point.ToString());
             return bestMove;
         }
 
         public void move()
         {
-            var moves = CheckMoves(pieceType);
+            var moves = CheckMoves(pieceColor);
             var move = DicideMove(moves);
             move.Execute();
+            if (canKillKing)
+                board.Win(pieceColor);
         }
-
-        private void message(string text)
-        {
-            MessageBox.Show(text, "", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
     }
 }
