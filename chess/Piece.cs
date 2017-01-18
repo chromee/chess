@@ -35,7 +35,7 @@ namespace chess
         private void SetImage()
         {
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
-            var imageDirectory = currentDirectory.Remove(currentDirectory.Length - 10) + $@"\piece\{pieceColor}_{pieceType}.png";
+            var imageDirectory = currentDirectory.Remove(currentDirectory.Length - 10) + $@"\Resources\piece\{pieceColor}_{pieceType}.png";
             image = System.Drawing.Image.FromFile(imageDirectory);
         }
 
