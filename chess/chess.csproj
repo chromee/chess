@@ -125,6 +125,7 @@
     <Content Include="piece\white_pawn.png" />
     <Content Include="piece\white_queen.png" />
     <Content Include="piece\white_rook.png" />
+    <Content Include="Resources\Chess.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
