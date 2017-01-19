@@ -362,9 +362,9 @@ namespace chess
                 case PieceType.bishop:
                     return 5;
                 case PieceType.queen:
-                    return 10;
-                case PieceType.king:
                     return 100;
+                case PieceType.king:
+                    return 1000000;
                 default:
                     return 0;
             }

@@ -51,9 +51,13 @@ namespace chess
                         var enemyMoveableSquares = Board.GetMoveableSquares();
                         foreach (var enemyMoveableSquare in enemyMoveableSquares)
                         {
-                            var killedAlly = Board.pieces.Find(p => p.Position == enemyMoveableSquare.position);
+                            var killedAlly = Board.pieces.Find(p => p.Position == enemyMoveableSquare.position && p.IsEnemy(enemy));
                             if (killedAlly != null)
+                            {
+
                                 moves[moveIndex].point -= killedAlly.GetTypePoint();
+                                //MessageBox.Show($"{killedAlly.pieceType}: {killedAlly.Position.x}, {killedAlly.Position.y}");
+                            }
                         }
                     }
                     #endregion
@@ -75,9 +79,14 @@ namespace chess
         {
             var moves = CheckMoves(pieceColor);
             var move = DicideMove(moves);
-            move.Execute();
             if (canKillKing)
+            {
+                move.piece.ApplyMoveableSquares();
+                move.Execute();
                 board.Win(pieceColor);
+            }
+            else
+                move.Execute();
         }
     }
 }

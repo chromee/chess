@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace chess
 {
@@ -8,8 +8,7 @@ namespace chess
         public Form1()
         {
             InitializeComponent();
-
-            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            
             this.MaximumSize = this.Size;
         }
 
