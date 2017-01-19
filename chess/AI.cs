@@ -35,7 +35,7 @@ namespace chess
                     piece.Position = moveableSquare.position;
 
                     #region 移動先に敵駒がいればプラス
-                    var killableEnemy = Board.pieces.Find(p => p.Position == moveableSquare.position && piece.IsEnemy(p));
+                    var killableEnemy = enemyPieces.ToList().Find(p => p.Position == moveableSquare.position);
                     if (killableEnemy != null)
                     {
                         moves[moveIndex].point += killableEnemy.GetTypePoint();
@@ -48,14 +48,23 @@ namespace chess
                     foreach (var enemy in enemyPieces)
                     {
                         enemy.ApplyMoveableSquares();
+                        if (enemy.pieceType == PieceType.pawn && enemy.Position.IsInsideBoard())
+                        {
+                            var oneFront = new Vector2(enemy.Position.x, enemy.Position.y + 1);
+                            var twoFront = new Vector2(enemy.Position.x, enemy.Position.y + 2);
+                            if (oneFront.IsInsideBoard())
+                                Board.squares[enemy.Position.x, enemy.Position.y + 1].ToUnMoveable();
+                            if (twoFront.IsInsideBoard())
+                                Board.squares[enemy.Position.x, enemy.Position.y + 2].ToUnMoveable();
+                        }
                         var enemyMoveableSquares = Board.GetMoveableSquares();
+
                         foreach (var enemyMoveableSquare in enemyMoveableSquares)
                         {
-                            var killedAlly = Board.pieces.Find(p => p.Position == enemyMoveableSquare.position && p.IsEnemy(enemy));
+                            var killedAlly = controllPieces.ToList().Find(p => p.Position == enemyMoveableSquare.position);
                             if (killedAlly != null)
                             {
                                 moves[moveIndex].point -= killedAlly.GetTypePoint();
-                                //MessageBox.Show($"{killedAlly.pieceType}: {killedAlly.Position.x}, {killedAlly.Position.y}");
                             }
                         }
                     }

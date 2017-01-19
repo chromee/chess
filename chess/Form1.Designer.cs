@@ -45,9 +45,10 @@
             this.button1.BackColor = System.Drawing.Color.DimGray;
             this.button1.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.button1.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button1.Location = new System.Drawing.Point(68, 374);
+            this.button1.Location = new System.Drawing.Point(51, 299);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(283, 127);
+            this.button1.Size = new System.Drawing.Size(212, 102);
             this.button1.TabIndex = 3;
             this.button1.Text = "GAME START";
             this.button1.UseVisualStyleBackColor = false;
@@ -60,9 +61,10 @@
             this.panel1.Controls.Add(this.radioButton2);
             this.panel1.Controls.Add(this.radioButton1);
             this.panel1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.panel1.Location = new System.Drawing.Point(289, 47);
+            this.panel1.Location = new System.Drawing.Point(217, 38);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(356, 277);
+            this.panel1.Size = new System.Drawing.Size(267, 222);
             this.panel1.TabIndex = 9;
             // 
             // radioButton3
@@ -70,11 +72,11 @@
             this.radioButton3.AutoSize = true;
             this.radioButton3.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.radioButton3.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.radioButton3.Location = new System.Drawing.Point(22, 215);
+            this.radioButton3.Location = new System.Drawing.Point(16, 172);
+            this.radioButton3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(213, 45);
+            this.radioButton3.Size = new System.Drawing.Size(174, 37);
             this.radioButton3.TabIndex = 5;
-            this.radioButton3.TabStop = true;
             this.radioButton3.Text = "RANDOM Lv2";
             this.radioButton3.UseVisualStyleBackColor = true;
             this.radioButton3.CheckedChanged += new System.EventHandler(this.radioButton3_CheckedChanged);
@@ -84,11 +86,11 @@
             this.radioButton2.AutoSize = true;
             this.radioButton2.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.radioButton2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.radioButton2.Location = new System.Drawing.Point(22, 120);
+            this.radioButton2.Location = new System.Drawing.Point(16, 96);
+            this.radioButton2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(213, 45);
+            this.radioButton2.Size = new System.Drawing.Size(174, 37);
             this.radioButton2.TabIndex = 4;
-            this.radioButton2.TabStop = true;
             this.radioButton2.Text = "RANDOM Lv1";
             this.radioButton2.UseVisualStyleBackColor = true;
             this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
@@ -96,11 +98,13 @@
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
             this.radioButton1.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.radioButton1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.radioButton1.Location = new System.Drawing.Point(22, 39);
+            this.radioButton1.Location = new System.Drawing.Point(16, 31);
+            this.radioButton1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(242, 45);
+            this.radioButton1.Size = new System.Drawing.Size(198, 37);
             this.radioButton1.TabIndex = 3;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "NORMAL MODE";
@@ -113,9 +117,10 @@
             this.panel2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.panel2.Controls.Add(this.radioButton5);
             this.panel2.Controls.Add(this.radioButton4);
-            this.panel2.Location = new System.Drawing.Point(68, 102);
+            this.panel2.Location = new System.Drawing.Point(51, 82);
+            this.panel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(215, 177);
+            this.panel2.Size = new System.Drawing.Size(161, 142);
             this.panel2.TabIndex = 10;
             // 
             // radioButton5
@@ -123,11 +128,11 @@
             this.radioButton5.AutoSize = true;
             this.radioButton5.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.radioButton5.ForeColor = System.Drawing.Color.Black;
-            this.radioButton5.Location = new System.Drawing.Point(31, 106);
+            this.radioButton5.Location = new System.Drawing.Point(23, 85);
+            this.radioButton5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(93, 45);
+            this.radioButton5.Size = new System.Drawing.Size(77, 37);
             this.radioButton5.TabIndex = 8;
-            this.radioButton5.TabStop = true;
             this.radioButton5.Text = "対戦";
             this.radioButton5.UseVisualStyleBackColor = true;
             this.radioButton5.CheckedChanged += new System.EventHandler(this.radioButton5_CheckedChanged);
@@ -135,11 +140,13 @@
             // radioButton4
             // 
             this.radioButton4.AutoSize = true;
+            this.radioButton4.Checked = true;
             this.radioButton4.Font = new System.Drawing.Font("メイリオ", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.radioButton4.ForeColor = System.Drawing.Color.Black;
-            this.radioButton4.Location = new System.Drawing.Point(31, 39);
+            this.radioButton4.Location = new System.Drawing.Point(23, 31);
+            this.radioButton4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(93, 45);
+            this.radioButton4.Size = new System.Drawing.Size(77, 37);
             this.radioButton4.TabIndex = 7;
             this.radioButton4.TabStop = true;
             this.radioButton4.Text = "CPU";
@@ -148,17 +155,17 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.BackgroundImage = global::chess.Properties.Resources.Chess;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ClientSize = new System.Drawing.Size(982, 953);
+            this.ClientSize = new System.Drawing.Size(736, 762);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.panel1.ResumeLayout(false);
