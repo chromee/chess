@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace chess
 {
@@ -16,26 +14,16 @@ namespace chess
         #region 演算子のオーバーライド
         public static bool operator ==(Vector2 c1, Vector2 c2)
         {
-            //nullの確認（構造体のようにNULLにならない型では不要）
-            //両方nullか（参照元が同じか）
-            //(c1 == c2)とすると、無限ループ
             if (object.ReferenceEquals(c1, c2))
-            {
                 return true;
-            }
-            //どちらかがnullか
-            //(c1 == null)とすると、無限ループ
             if (((object)c1 == null) || ((object)c2 == null))
-            {
                 return false;
-            }
-
+            
             return (c1.x == c2.x) && (c1.y == c2.y);
         }
         public static bool operator !=(Vector2 c1, Vector2 c2)
         {
             return !(c1 == c2);
-            //(c1 != c2)とすると、無限ループ
         }
         #endregion
 
@@ -45,7 +33,7 @@ namespace chess
             Vector2 vec = new Vector2(R.Next(min, max), R.Next(min, max));
             return vec;
         }
-        
+
         public bool IsInsideBoard()
         {
             return x > 0 && x < 9 && y > 0 && y < 9;

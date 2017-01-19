@@ -54,7 +54,6 @@ namespace chess
                             var killedAlly = Board.pieces.Find(p => p.Position == enemyMoveableSquare.position && p.IsEnemy(enemy));
                             if (killedAlly != null)
                             {
-
                                 moves[moveIndex].point -= killedAlly.GetTypePoint();
                                 //MessageBox.Show($"{killedAlly.pieceType}: {killedAlly.Position.x}, {killedAlly.Position.y}");
                             }

@@ -8,8 +8,6 @@ namespace chess
         public Form1()
         {
             InitializeComponent();
-            
-            this.MaximumSize = this.Size;
         }
 
         private void radioButton1_CheckedChanged(object sender, System.EventArgs e)
